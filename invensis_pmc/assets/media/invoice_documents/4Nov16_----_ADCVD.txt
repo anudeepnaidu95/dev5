@@ -1,0 +1,108 @@
+EG604520072  --- Additional Fees
+EG659983274  --- Additional Fees 1 inv
+
+EG630942639 --abs aph
+
+---------------------------------------------
+products module :
+EG601457872
+
+Products - 
+
+
+EG601857022 --cr
+EG647801240 -- approved product with pga --modified  product without pga 
+
+DMS --- 
+2527024
+578754584 --- EG625270244
+
+USED ONE - 4780124 --- DO YOU WANT TO NAVIGATE MSG-- 
+Inbond - 3247674
+CR -- EG6 0185702-2 -- WITH USED BOL --- WORKS OK
+
+NEW ONE -- 0157024 5 -- EG601570245
+
+0418787 -- USING A USED BOL-- THROWS ERROR N RENDERS THE DOCKET UNUSABLE---EG647801240 
+
+0248056 8
+
+LMBE, LOPEZ MADRID, BLAS ROBERTO (MX-4873 -- BOL -- 245487
+INVOICE -- 0154878
+
+EG600004121
+non ams
+EG601004575
+EG602425753
+EG601475783
+EG608000006
+EG601474018 - 78999 - 12-30-2016
+
+EG602521015- 14857 - 11-17-2016
+EG602521015
+EG648025450
+EG625247853
+EG602410003
+
+EG614587806
+EG602421786
+------------------
+ad/cvd - EG632354676 -- user story -- 10267
+EG602421786 -- 3921901100 -- Accepted
+EG600011258 - 1step
+EG601527807 -- fully classify
+EG601478803-- from Products
+EG601578008 -- from Products
+EG600001119 -- cr - ad cvd hts from cr --- 2 step...
+
+Entered Value Calculation 
+5.15
+150
+5000
+17.32
+3921901100
+4.2 +64.28+29.54 =98.02
+(Value of Goods Amount-Fees)/{(Duty Rate +Ad Rate +CVD Rate)/100+1}
+
+5000-155.15-17.32
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

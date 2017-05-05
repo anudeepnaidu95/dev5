@@ -1,0 +1,89 @@
+{% load i18n %} 
+{% load staticfiles %} 
+<style>
+.loading img{
+
+        z-index: 1000;
+        margin: auto;
+        padding: 10px;
+        width: 80px;
+        labelackground-color: White;
+        labelorder-radius: 10px;
+        filter: alpha(opacity=100);
+        opacity: 1;
+        -moz-opacity: 1;
+}
+
+</style>
+
+
+  
+   <div class="panel panel-default">
+     <div class="panel-heading">
+            
+        
+            <thead>
+            
+                <tr >
+                  
+                   <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+                    <p><label>Company:</label><span>{{ lead.title }}</span></p>
+                    <p><label>Description:</label><span>{{ lead.description }}</span></p>
+                    <p><label>Contact Person:</label><span>{{ lead.contact_name }}</span></p>
+                    <p><label>Requirement:</label><span>{{ lead.requirement }}</span></p>
+                    <p><label>Designation:</label><span>{{ lead.designation }}</span></p>
+                    <p><label>Industry:</label><span>{{ lead.industry }}</span></p>
+                    <p><label>Services:</label><span>{{ lead.services }}</span></p>
+                    <p><label>Email:</label><span>{{ lead.email }}</span></p>
+                    <p><label>Phone:</label><span>{{ lead.phone }}</span></p>
+                    <p><label></label><span></span></p>
+                    </div>
+                    <p><label>AddressLine1:</label><span>{{ lead.addressline1 }}</span></p>
+                    <p><label>AddressLine2:</label><span>{{ lead.addressline2 }}</span></p>
+                    <p><label>Country:</label><span>{{ lead.country }}</span></p>
+                    <p><label>State:</label><span>{{ lead.state }}</span></p>
+                    <p><label>Zipcode:</label><span>{{ lead.zipcode }}</span></p>
+                    <p><label>Lead Date:</label><span>{{ lead.lead_date}}</span></p>
+                    <p><label>Lead Source:</label><span>{{ lead.lead_source }}</span></p>
+                    <p><label>Other Lead Source:</label><span>{{ lead.other_lead_source }}</span></p>
+                    <p><label>Is Converted To Customer:</label><span>{{ lead.is_converted_to_customer }}</span></p>
+                    <p><label>Sales Rep:</label><span>{{ lead.sales_rep }}</span></p>
+                   
+                   
+
+                    </div>
+                    </div>
+                    
+                    <table class="table table-bordered  " id="lead_form">
+                        <thead>
+                            <tr>
+                             <th>Next Followup</th>
+                             <th>Lead Status</th>
+                             <th>Percentage</th>
+                             <th>Is Converted To Customer</th>
+                             <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for followups in followups %}
+                            <tr>
+                                <td>{{lead.latest_followup_date}}</td>
+                                <td>{{ lead.latest_lead_status}}</td>
+                                <td>{{followups.percentage}}</td>
+                                <td>{{ followups.is_converted_to_customer }}</td>
+                                <td>{{followups.remarks}}</td>
+                                
+                            </tr>  
+                        </tbody>
+                        {%endfor%}
+                    </table>
+                    </div>
+
+                    </th>
+                </tr>
+            </thead>
+            
+           
+    </div>
+   
+</div>

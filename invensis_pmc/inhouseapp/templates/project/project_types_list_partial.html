@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Project Types</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'project_type_add' %}" data-list-div="project_type_list_div" data-list-div-url="{% url 'project_types_list' %}" data-title="Add Project Type" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+         <table id="project_type_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Project Type Name</th>
+                    <th>Slug</th>
+                    <th>Descrption</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for type in project_types %}
+                <tr class="even pointer">
+                    <td class=" ">{{ type.title }}</td>
+                    <td class=" ">{{ type.slug }} </td>
+                    <td class=" ">{{ type.description }}</td>
+                  
+                    <td class="last">
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'project_type_edit' type.slug %}" data-list-div="project_type_list_div" data-list-div-url="{% url 'project_types_list' %}" data-title="Edit Project Type" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+<script type='text/javascript'>
+$(function(){
+    $('#project_type_list_table').dataTable();
+})
+
+
+</script>

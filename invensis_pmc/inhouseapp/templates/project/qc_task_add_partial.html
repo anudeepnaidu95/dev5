@@ -1,0 +1,126 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% if is_edit_mode %}
+    
+<form id="qc_task_form" action="{% url 'qc_task_edit' id %}" method="post" name="edit_qc_task" class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    
+{% else %}
+
+<form id="qc_task_form" action="{% url 'qc_task_add' %}" method="post" name="new_qc_task"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+    <div id="form_ajax" style="display:none; color:green">
+        <span>Form submit successfully.</span>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5">
+               
+                {{ qc_checklist_form.qc_attribute1|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute2|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute3|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute4|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute5|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute6|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute7|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute8|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute9|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute10|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute11|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute12|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute13|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute14|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute15|as_crispy_field }}
+  
+                {{ qc_checklist_form.qc_attribute16|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute17|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute18|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute19|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute20|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute21|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute22|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute23|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute24|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute25|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute26|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute27|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute28|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute29|as_crispy_field }}
+                {{ qc_checklist_form.qc_attribute30|as_crispy_field }}
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-lg-offset-2">
+            {{ form.non_field_errors }}
+            {{form|crispy}}
+        </div>
+    </div>
+
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+</form>
+
+
+
+<script type="text/javascript">
+    
+
+$(document).ready(function() {
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#qcmodal").modal("hide");
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="sla_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+            $('#qc_task_form').ajaxForm(options);
+        });
+
+</script>

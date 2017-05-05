@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Payments Mode Setup</h4>
+        </div>
+    <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'payment_mode_add' %}" data-list-div="payment_mode_setup_list_div" data-list-div-url="{% url 'payment_modes_list' %}" data-title="Setup Payment Mode" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body" style="overflow:scroll">
+            <table id="payment_modes_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+                <thead>
+                    <tr class="headings">
+                        <th>Currency</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in payment_modes_lists %}
+                        <tr class="even pointer">
+                            <td class=" ">{{ item.currency}}</td>
+                            <td class="">
+                                <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'payment_mode_edit' item.id %}" data-list-div="payment_mode_setup_list_div" data-list-div-url="{% url 'payment_modes_list' %}" data-title="Edit Payment Mode Setup Details" data-target=".bs-example-modal-lg">Edit</button>
+                            </td>
+                        </tr>                
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#payment_modes_list_table').dataTable();
+    })
+</script>

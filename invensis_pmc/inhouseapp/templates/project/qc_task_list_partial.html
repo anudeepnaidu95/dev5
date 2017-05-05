@@ -1,0 +1,351 @@
+
+{% load templates_extras %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+            <h4>Qc Tasks</h4>
+
+    </div>
+    <div class="panel-body" style="overflow:scroll">
+        <table id="qc_task_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th style="display:none;"></th>
+                    <th>Task Name</th>
+                    {% if request.user|has_group:'operations manager' %}
+                        <th>staff</th>
+                    {% endif %}
+                    <th>File Path</th>
+                    <th>No of Transactions</th> 
+
+                    <th>Qc Status</th>
+                    {% if request.user|has_group:'qc' %}
+                        <th></th>
+                        <th>Idle Time</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in qc_task %}
+                    
+                    {% if type.is_workedon %}
+                        <tr class="even pointer qc_tasks current_task" style="color:limegreen;">
+                    {% else %}
+                        <tr class="even pointer qc_tasks ">
+
+                        {% endif %}
+
+                        <td class='qc_task_id' style="display:none;" id='qc_task{{type.id}}' value='{{type.id}}'>{{type.id}}</td>
+                        <td class='is_workedon' style='display: none;' value='{{type.is_workedon}}'>{{type.is_workedon}}</td>
+
+                        <td class=" ">{{ type.lead_task }}</td>
+                        {% if request.user|has_group:'operations manager' %}
+                            <td class=" ">{{ type.staff }}</td>
+                        {% endif %}
+                        <td class=" ">{{ type.filename }}</td>
+                        <td class=" ">{{ type.no_of_txs }}</td>
+
+                        <td class=" ">{{type.qc_status}}</td>
+                        {% if request.user|has_group:'qc' %}
+                        <td class="">
+                            {% if type.qc_time_in_min %}
+                                <p><span class="time_in_min" style="font-size: larger" value='{{type.qc_time_in_min}}'>{{type.qc_time_in_min}}</span></p>
+                            {% else %}
+                                <p><span class="time_in_min" style="font-size: larger" value='{{type.qc_time_in_min}}'></span></p>
+                            {% endif %}                            
+                            <button type="button" class='btn btn-success start'  id='start'name='start_task' value="start">Start </button>
+                            <button type="button" class='btn btn-primary pause' disabled="disabled" id='pause' data-toggle="modal" data-target="#myModal" name='pause_task' value="pause">Pause </button>
+
+                            <button type="button" class='btn btn-danger complete' disabled="disabled" id='complete' data-toggle="modal" data-url="{% url 'qc_task_edit' id=type.id %}" data-list-div="qc_task_list_div" data-list-div-url="{% url 'qc_task_list' %}" data-title="Edit Task" data-target=".bs-example-modal-lg"name='complete_task' value='complete'>Complete </button>
+
+                        </td>
+
+                        <td class="">
+                            <p><span class="idle_time_in_min" style="font-size: larger"></span></p>
+                            
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" 
+                            data-url="{% url 'qc_task_edit' id=type.id %}" data-list-div="qc_task_list_div" data-list-div-url="{% url 'qc_task_list' %}" data-title="Edit Task" data-target=".bs-example-modal-lg">Qc Checklist</button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Pause Task</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="input-group col-md-6 col-md-offset-2 col-lg-6 col-lg-offset-2">
+                           <div class="form-group ">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="Lunch Break" checked>
+                                        Lunch Break
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="Short Break">
+                                        Short Break
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="Team Meeting">
+                                        Team Meeting
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="rejected">
+                                        Rejected
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="pendingReason" value="cancelled">
+                                        Cancelled
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="otherReason" value="Other">
+                                        Other
+                                    </label>
+                                </div>
+
+                                <div id="pendReason" style="display: none">
+                                   Enter Pending Reason:
+                                    <input type='text' id="pending_reason" size='50' />
+                                </div>
+
+                                <div id="dvReason" style="display: none">
+                                   Enter Other Reason:
+                                    <input type='text' id="other" size='50' />
+                                </div>
+
+                                <input type="hidden" name="status" id="btn-status-event">
+                                <input type="hidden" name="s_task_id" id="s_task_id">
+                                <input type="hidden" name="s_task_id" id="indexOfPause">
+                            </div>
+                            
+                        </div>
+                      <!-- /input-group -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="pause_options" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+       // alert(getCookie('trindex'))
+        task_id = $('tr.current_task').find('td.qc_task_id').val();
+        is_working = $('tr.current_task').find('td.is_workedon').text();
+
+        //alert(is_working);
+        if(is_working=='True'){
+            var rowIndex = $('tr.current_task').find('td.is_workedon').index();
+            rowIndex=rowIndex-1;
+            //alert(rowIndex)
+            $('.start').attr('disabled',true);
+            $('.pause').attr('disabled',true);
+            $('.complete').attr('disabled',true);
+
+            $('tr.current_task').eq(rowIndex).find('td').find('button.pause').attr('disabled',false);
+            $('tr.current_task').eq(rowIndex).find('td').find('button.complete').attr('disabled',false);            
+        }
+
+
+         $('body').on('click', '#pause_options', function(event) {
+            event.preventDefault();
+            var options=$('input[name="optionsRadios"]:checked').val();
+
+            if(options == 'Other'){
+                options = options + '--' + $('#other').val();
+               // alert(options)
+            }else if (options == 'pending'){
+                options = options + '--' + $('#pending_reason').val();
+                alert(options)
+            }else{
+                options = options
+            }
+            //alert(options)
+
+            var status=$('#btn-status-event').val();
+            var s_task_id=$('#s_task_id').val();
+            var btnPauseIndex=$('#indexOfPause').val();
+            $('#myModal').modal('hide');
+            $.removeCookie("trindex");
+            var self=$(this);
+            //alert(options +' '+ status +' '+s_task_id)
+
+            $('.start').attr('disabled',false);
+            $('.pause').attr('disabled',true);
+            $('.complete').attr('disabled',true);
+
+            $.ajax({
+                url: "{% url 'qc_task_status' %}",
+                type: 'POST',
+                dataType: 'json',
+                data: { options: options,
+                        status:status,
+                        s_task_id:s_task_id
+                },
+            })
+            .done(function(data) {
+                console.log(data)
+                $('tr.qc_tasks').eq(btnPauseIndex).find('.pause').parent().find('span.time_in_min').text(data.time_in_min);
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+            
+
+        });
+    $('tr.qc_tasks').find('.start').on('click', function(event) {
+        event.preventDefault();
+            var self=$(this);
+            var start= self.val();
+            //var staff_task_id = self.parent().find('td.staff_task_id').val();
+            //var staff_task_id = self.parent().siblings(":first").text();  
+            var s_task_id = self.closest('tr').children('td:first').text();  
+          
+            //alert(s_task_id)
+            var index_of_start = self.parent().parent().index()
+
+            $('.start').attr('disabled',true);
+            $('.pause').attr('disabled',true);
+            $('.complete').attr('disabled',true);
+            self.parent().find('.pause').attr('disabled',false);
+            self.parent().find('.complete').attr('disabled',false);
+
+           $.ajax({
+                url : "{% url 'qc_task_status' %}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    s_task_id:s_task_id,
+                    start:start,
+                },
+            })
+            .done(function(data) {
+                console.log(data)
+                if(data.idle_time_min != null){
+                    $('tr.qc_tasks').eq(index_of_start).find('span.idle_time_in_min').text(data.idle_time_min);
+                }else{
+                    $('tr.qc_tasks').eq(index_of_start).find('span.idle_time_in_min').text('00:00:00');
+
+                }
+             
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+            
+        });
+           
+       
+        $('.pause').on('click', function() {
+              
+            var self=$(this);
+            var pause = self.val();
+            $('#btn-status-event').val(pause);
+            $('#indexOfPause').val(self.parent().parent().index())
+            var s_task_id = self.closest('tr').children('td:first').text(); 
+              $('#s_task_id').val(s_task_id);
+          });
+        
+        $('input[name="optionsRadios"]').click(function(){
+
+            if ($('#otherReason').is(':checked')){   
+                $('#dvReason').show();
+            }else{
+                $('#dvReason').hide();
+            }
+
+            if($('#pendingReason').is(':checked')){
+                $('#pendReason').show();
+            }else{
+                $('#pendReason').hide();
+            }
+
+        })
+
+
+        $('.complete').on('click', function() {
+             
+            if (!confirm("Do you want to Submit this task")){
+              return false;
+            }
+            //alert('hellow')
+           // $('qcmodal').modal('show');
+            var self=$(this);
+            var complete = self.val()
+            $('.start').attr('disabled',false);
+            $('.pause').attr('disabled',true);
+            $('.complete').attr('disabled',true);
+            self.parent().find('.pause').attr('disabled',true);
+            self.parent().find('.complete').attr('disabled',true);
+            var s_task_id = self.closest('tr').children('td:first').text(); 
+
+
+            $.ajax({
+                url : "{% url 'qc_task_status' %}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    s_task_id:s_task_id,
+                    complete:complete,
+                },
+            })
+            .done(function(data){
+                console.log("success")
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+        });
+
+
+    });
+
+</script>
+<script type="text/javascript">
+    
+
+$(function () {
+    // body...
+    $('#qc_task_list_table').dataTable();
+})
+
+</script>
+
+
+

@@ -1,0 +1,82 @@
+
+{% load templates_extras %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+            <h4>Qc Tasks</h4>
+
+ 
+    <!--<form id= "qc_taskForm_hist" action="{% url 'qc_task_hist_list' %}" method="GET"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+            
+
+        {{ filter.form.as_p }}
+        <input type="submit" />
+            </form> -->
+   </div>
+    <div class="panel-body">
+        <table id="qc_task_hist_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Task Name</th>
+                    {% if request.user|has_group:'operations manager' %}
+                        <th>staff</th>
+                    {% endif %}
+                    <th>File Path</th>
+                    <th>No of Transactions</th> 
+                    <th>No of Transactions Completed</th>
+                    <th>Qc Status</th>
+                    
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for qc_task in filter %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ qc_task.lead_task }}</td>
+                        {% if request.user|has_group:'operations manager' %}
+                            <td class=" ">{{ qc_task.staff }}</td>
+                        {% endif %}
+                        <td class=" ">{{ qc_task.filename }}</td>
+                        <td class=" ">{{ qc_task.no_of_txs }}</td>
+                        <td class=" ">{{qc_task.no_of_txs_completed}}</td>
+                        <td class=" ">{{qc_task.qc_status}}</td>
+                        
+                       
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+// prepare the form when the DOM is ready 
+/*$(document).ready(function() { 
+    
+    // bind form using ajaxForm 
+    $('#qc_taskForm_hist').ajaxForm({ 
+        // dataType identifies the expected content type of the server response 
+        dataType:  'json', 
+ 
+        // success identifies the function to invoke when the server response 
+        // has been received 
+        success:   processJson 
+    }); 
+});
+$("#qc_taskForm_hist").ajaxForm({ success: function(response){
+    //alert(" Please fill the staff " );
+    //staff.focus();
+    
+    $('#qc_task_hist_list_table').html(response);
+     
+ } });
+*/
+
+$('#qc_task_hist_list_table').DataTable({
+                "responsive": true,
+                "bFilter": true,
+                "searching": true,
+        })
+</script> 
+

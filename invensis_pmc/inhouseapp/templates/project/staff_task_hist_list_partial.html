@@ -1,0 +1,75 @@
+
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% load templates_extras %}
+
+<style type="text/css">
+#staff_taskForm_hist li{
+    display: inline;
+}
+
+</style>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Staff Tasks History List</h4>
+    </div>
+    <div class="panel-body">
+        <table id="staff_task_hist_list_table" class="table table-responsive table-bordered dt-responsive hover order-column table-responsive table-striped"  cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Task Name</th>
+                    <th>File Path</th>
+                    <th>Staff</th>
+                    <th>No of Transactions</th>
+
+                    {% if request.user|has_group:'lead' %}
+                        <th>No of Transactions Completed</th>
+                    {% endif %}
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff_task in filter.qs %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ staff_task.lead_task }}</td>
+
+                        <td class=" ">{{ staff_task.filename }}</td>
+                        <td>{{staff_task.staff}}</td>
+                        <td class=" ">{{ staff_task.no_of_txs }}</td>
+                        {% if request.user|has_group:'lead' %}
+                            <td class=" ">{{ staff_task.no_of_txs_completed }}</td>
+                        {% endif %}
+                        <td class=" ">{{ staff_task.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+/*$("submit").click(function(response){
+    $.ajax({
+        $('#staff_taskForm_hist').ajaxForm({
+            // dataType identifies the expected content type of the server response
+            dataType:  'json',
+            success: fuction(response){
+                console.log(response)
+                //$('#staff_task_hist_list_table').html(response);
+    }
+    });
+
+}*/
+
+$('#staff_task_hist_list_table').DataTable({
+                "responsive": true,
+                "bFilter": true,
+                "searching": true,
+        })
+</script>

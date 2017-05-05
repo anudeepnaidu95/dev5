@@ -1,0 +1,121 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% if is_edit_mode %}
+    
+<form id="myForm" action="{% url 'qc_template_edit' id %}" method="post" id="new-qc_template"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% else %}
+
+<form id="myForm" action="{% url 'qc_template_add' %}" method="post" id="new-qc_template"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {{ form.non_field_errors }}
+        <div id="form_ajax" style="display:none; color:green">
+            <span>Form submit successfully.</span>
+        </div>
+        
+        <div class="col-xs-6 col-sm-6 col-md-5 col-lg-5">
+            {{ form.service|as_crispy_field }}       
+            {{ form.qc_attribute_field1|as_crispy_field }}
+            {{ form.qc_attribute_field2|as_crispy_field }}
+            {{ form.qc_attribute_field3|as_crispy_field}}
+            {{ form.qc_attribute_field4|as_crispy_field}}
+            {{ form.qc_attribute_field5|as_crispy_field}}
+            {{ form.qc_attribute_field6|as_crispy_field}}
+            {{ form.qc_attribute_field7|as_crispy_field }}
+            {{ form.qc_attribute_field8|as_crispy_field }}
+            {{ form.qc_attribute_field9|as_crispy_field}}
+            {{ form.qc_attribute_field10|as_crispy_field}}
+            {{ form.qc_attribute_field11|as_crispy_field}}
+            {{ form.qc_attribute_field12|as_crispy_field}}
+            {{ form.qc_attribute_field13|as_crispy_field }}
+            {{ form.qc_attribute_field14|as_crispy_field}}
+            {{ form.qc_attribute_field15|as_crispy_field}}
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                      
+            {{ form.qc_attribute_field16|as_crispy_field }}
+            {{ form.qc_attribute_field17|as_crispy_field }}
+            {{ form.qc_attribute_field18|as_crispy_field}}
+            {{ form.qc_attribute_field19|as_crispy_field}}
+            {{ form.qc_attribute_field20|as_crispy_field}}
+            {{ form.qc_attribute_field21|as_crispy_field}}
+            {{ form.qc_attribute_field22|as_crispy_field }}
+            {{ form.qc_attribute_field23|as_crispy_field }}
+            {{ form.qc_attribute_field24|as_crispy_field}}
+            {{ form.qc_attribute_field25|as_crispy_field}}
+            {{ form.qc_attribute_field26|as_crispy_field}}
+            {{ form.qc_attribute_field27|as_crispy_field}}
+            {{ form.qc_attribute_field28|as_crispy_field }}
+            {{ form.qc_attribute_field29|as_crispy_field}}
+            {{ form.qc_attribute_field30|as_crispy_field}}
+        </div>
+    </div>
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+    
+
+</form>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal("hide");
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="qc_task_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+            $('#myForm').ajaxForm(options);
+        });
+
+</script>

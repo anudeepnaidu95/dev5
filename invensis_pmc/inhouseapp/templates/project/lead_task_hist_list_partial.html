@@ -1,0 +1,81 @@
+{% load templates_extras %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Lead Task History Lists</h4>
+    
+      <!--   {% if request.user|has_group:'operations manager' %}
+            <button type="button" class="btn btn-secondary " data-toggle="modal" data-url="{% url 'lead_task_add' %}" data-list-div="lead_task_list_div" data-list-div-url="{% url 'lead_tasks_hist_list' %}" data-title="Add Lead Task" data-target=".bs-example-modal-lg">New</button>
+        {% endif %}
+ -->
+        <!--<form id="lead_taskForm_hist" action="{% url 'lead_tasks_hist_list' %}" method="GET" class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form> -->
+  </div>  
+    <div class="panel-body">
+        <table id="lead_task_hist_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Task Name</th>
+                    {% if request.user|has_group:'operations manager' %}
+                        <th>Lead</th>
+                    {% endif %}
+                    <th>File Path</th>
+                    <th>No of Transactions</th>
+                    <th>Total Time Hours</th>
+                    <th>Status</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead_task in filter %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ lead_task.task }}</td>
+                        {% if request.user|has_group:'operations manager' %}
+                            <td class=" ">{{ lead_task.lead }}</td>
+                        {% endif %}
+                        <td class=" ">{{ lead_task.filename }}</td>
+                        <td class=" ">{{ lead_task.no_of_txs }}</td>
+                        <td class=" ">{{ lead_task.total_time_hours }}</td>
+                        <td class=" ">{{ lead_task.status }}</td>
+                        
+                        
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+// prepare the form when the DOM is ready 
+/*$(document).ready(function() { 
+    
+    // bind form using ajaxForm 
+    $('#lead_taskForm_hist').ajaxForm({ 
+        // dataType identifies the expected content type of the server response 
+        dataType:  'json', 
+ 
+        // success identifies the function to invoke when the server response 
+        // has been received 
+        success:   processJson 
+    }); 
+});
+*/
+/*$("#lead_taskForm_hist").ajaxForm({ success: function(response){
+    //alert(response)
+    $('#lead_task_hist_list_table').html(response);
+     
+ } });
+*/
+
+$('#lead_task_hist_list_table').DataTable({
+                "responsive": true,
+                "bFilter": true,
+                "searching": true,
+        })
+
+</script>   

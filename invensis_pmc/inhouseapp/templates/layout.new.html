@@ -1,0 +1,77 @@
+{% load i18n %}
+{% load staticfiles %}
+{% load format %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title %}
+            {{ application_config.header }}
+        {% endblock %}
+        - {{ application_config.title }}
+    </title>
+    {% include 'layout.head.html' %}
+    {% block og %}
+        <meta name="author" content="{{ application_config.author }}">
+        <meta name="description" content="{{ application_config.description }}">
+        <meta name="keywords" content="{{ application_config.keywords }}">
+
+        <meta property="og:author" content="{{ application_config.author }}"/>
+        <meta property="og:title" content="{{ application_config.title }}"/>
+        <meta property="og:description" content="{{ application_config.description }}"/>
+        <meta property="og:image" content="{% static 'common/img/social_cover.png' %}"/>
+        <meta property="og:url" content="{{ request.get_full_path }}"/>
+
+        <meta property="fb:app_id" content="{{ application_config.facebook_id }}"/>
+
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="{{ application_config.twitter_account }}"/>
+        <meta name="twitter:title" content="{{ application_config.title }}"/>
+        <meta name="twitter:description" content="{{ application_config.description }}"/>
+        <meta name="twitter:image" content="{% static 'common/img/social_cover.png' %}"/>
+        <meta name="twitter:url" content="{{ request.get_full_path }}"/>
+
+        <meta itemprop="name" content="{{ application_config.title }}"/>
+        <meta itemprop="description" content="{{ application_config.description }}"/>
+        <meta itemprop="image" content="{% static 'common/img/social_cover.png' %}"/>
+    {% endblock %}
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body class="hold-transition skin-blue  sidebar-mini"{% block body_attributes %}
+
+{% endblock %}>
+<div class="wrapper">
+
+    {% block after_body %}
+    {% endblock %}
+    {% include 'layout.navbar.html' %}
+
+    <div class="container-fluid">
+        {% block container %}
+
+            {% if user.profile and not user.profile.is_verified %}
+                <div class="alert alert-warning" role="alert">{% trans 'Please check your email for an activation link.' %}</div>
+            {% elif user.profile and not user.is_active %}
+                <div class="alert alert-danger" role="alert">{% trans 'Your user is not active.' %}</div>
+            {% endif %}
+            {% include 'layout.messages.html' %}
+            {% block content %}
+            {% endblock %}
+
+        {% endblock %}
+        {% include 'layout.footer.html' %}
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    {% include 'layout.end1.html' %}
+    {% block end %}
+    {% endblock %}
+</div>
+</body>
+</html>

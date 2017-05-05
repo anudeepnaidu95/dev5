@@ -1,0 +1,277 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+<div class="box">
+    <div class="box-body">
+        <div id="errorid" style="display:; color:red"></div>
+        {% if is_edit_mode %}
+            <form id="myform" action="{% url 'payment_mode_edit' id %}" method="post"   class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+        {% else %}
+            <form id="myform" action="{% url 'payment_mode_add' %}" method="post" class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+        {% endif %}
+        
+            {{ form.non_field_errors }}
+        <div class="col-md-12 col-lg-12">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                {{form.currency|as_crispy_field}}            
+            </div>
+        </div>        
+        
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <!-- check mode setup -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class='col-md-8'>
+                        <h4>Cheque Mode Setup</h4>
+                    </div>
+                    {{cheque_setup_form.is_applicable|as_crispy_field}}
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-5 col-lg-5">
+                        {{cheque_setup_form.non_field_errors}}
+                            {{ cheque_setup_form.company_name|as_crispy_field }}
+                            {{ cheque_setup_form.bank|as_crispy_field }}
+                            {{ cheque_setup_form.account_number|as_crispy_field }}
+                            {{ cheque_setup_form.phone|as_crispy_field }}
+                            {{ cheque_setup_form.email|as_crispy_field }}
+                        </div>
+                        <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                            {{ cheque_setup_form.country|as_crispy_field }}
+                            {{ cheque_setup_form.state|as_crispy_field }}
+                            {{ cheque_setup_form.city|as_crispy_field }}
+                            {{ cheque_setup_form.addressline1|as_crispy_field }}
+                            {{ cheque_setup_form.addressline1|as_crispy_field }}
+                            {{ cheque_setup_form.pincode|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Paypal mode setup -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class='col-md-8'>
+                        <h4>Paypal Mode Setup</h4>
+                    </div>
+                    {{paypal_setup_form.is_applicable|as_crispy_field}}
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-5 col-lg-5">
+                            {{paypal_setup_form.non_field_errors}}
+                            {{paypal_setup_form.surcharge_percent|as_crispy_field}}
+                        </div>
+                        <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                        {{ paypal_setup_form.payable_to_email|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- wiretransefer mode setup -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class='col-md-8'>
+                        <h4>Wiretransfer Mode Setup</h4>
+                    </div>
+                    {{ wiretransefer_setup_form.is_applicable|as_crispy_field }}
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-offset-2 col-md-6">
+                            {{wiretransefer_setup_form.show_only_beneficiary_details|as_crispy_field }}
+                        </div>
+                        <!--beneficiary correspondent bank details setup -->
+                        <br></br>
+                        <h4>Beneficiary Correspondent Bank Details Setup</h4>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-md-5 col-lg-5">
+                                {{wiretransefer_setup_form.non_field_errors}}
+
+                                {{ wiretransefer_setup_form.correspondent_bank_label|as_crispy_field }}
+                                {{ wiretransefer_setup_form.correspondent_bank_name|as_crispy_field }}
+                                {{ wiretransefer_setup_form.correspondent_bank_address|as_crispy_field }}
+                            </div>
+                            <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                                <br><br></br><br>
+                                {{ wiretransefer_setup_form.correspondent_bank_account_number|as_crispy_field }}
+                                {{ wiretransefer_setup_form.correspondent_bank_swift_code|as_crispy_field }}
+                            </div>
+                        </div>
+                        <br></br>
+                        <!-- Beneficiary bank details setup -- >
+                        <h4>Beneficiary Bank Details Setup</h4>
+                        <br></br>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-md-5 col-lg-5">
+                            {{wiretransefer_setup_form.non_field_errors}}
+                            {{ wiretransefer_setup_form.beneficiary_banker_label|as_crispy_field }}
+                                {{ wiretransefer_setup_form.beneficiary_banker_name|as_crispy_field }}
+                                {{ wiretransefer_setup_form.beneficiary_banker_swift_code|as_crispy_field }}
+                            </div>
+                            <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                            <br><br></br><br>
+                            {{wiretransefer_setup_form.beneficiary_banker_address|as_crispy_field }}   
+                            </div>
+                        </div>
+                        <br></br>
+
+                        <!--further credit to -->
+                        <h4>Further Credit To Setup</h4>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-md-5 col-lg-5">
+                            {{wiretransefer_setup_form.non_field_errors}}
+
+                            {{ wiretransefer_setup_form.further_credit_to_label|as_crispy_field }}
+                                {{ wiretransefer_setup_form.further_credit_to_bank|as_crispy_field }}
+                            </div>
+                            <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                                <br><br></br><br>
+                                {{ wiretransefer_setup_form.further_credit_to_bank_address|as_crispy_field }}   
+                            </div>
+                        </div>
+                        <br></br>
+                        <!-- beneficiary_label -->
+                        <h4>Beneficiary Wiretransfer Setup</h4>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-md-5 col-lg-5">
+                            {{wiretransefer_setup_form.non_field_errors}}
+
+                            {{ wiretransefer_setup_form.beneficiary_label|as_crispy_field }}
+
+                                {{ wiretransefer_setup_form.beneficiary_name|as_crispy_field }}
+                                {{ wiretransefer_setup_form.beneficiary_bank_name|as_crispy_field }}
+                                {{ wiretransefer_setup_form.beneficiary_account_number|as_crispy_field }}
+                            </div>
+                            <div class="col-md-offset-1 col-md-5 col-lg-offset-1 col-lg-5">
+                                <br><br></br><br>
+                                {{ wiretransefer_setup_form.beneficiary_routing_number|as_crispy_field }}   
+                                {{ wiretransefer_setup_form.beneficiary_swift_code|as_crispy_field }}   
+                                {{ wiretransefer_setup_form.beneficiary_bank_address|as_crispy_field }}   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    <div id="form_ajax_error" style="display:none; color:red">
+        <span>Can not submit data due to errors.</span>
+    </div>
+    <div id="form_ajax" style="display:none; color:green">
+        <span>Form submit successfully.</span>
+    </div>
+       
+        
+
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+    
+</form>
+</div>
+</div>
+
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+    
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal('hide');
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="invoice_setup_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+
+            $('#myform').ajaxForm(options);
+            $('#paymentterms_formsetTable tbody tr').formset({
+                // prefix: '{{ paymentterms_formset.prefix }}',
+                addText:'add',
+                deleteText: 'Delete',
+                });
+        });
+
+       
+
+
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+            
+            //attach keypress to input
+            $('#id_phone ,#id_swift_id,#id_account_number,#id_routing_number').keydown(function(event) {
+                // Allow special chars + arrows 
+                if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9||event.keyCode == 32 ||event.keyCode == 189 ||event.keyCode == 190  
+                    || event.keyCode == 27 || event.keyCode == 13 ||event.keyCode == 187 ||event.keyCode == 107 ||event.keyCode == 109 ||event.keyCode == 51
+                    || (event.keyCode == 65 && event.ctrlKey === true) 
+                    || (event.keyCode >= 35 && event.keyCode <= 39)){
+                        return;
+                }else {
+                    // If it's not a number stop the keypress
+                    if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                        event.preventDefault(); 
+                    }   
+                }
+            });
+            
+        });
+</script>

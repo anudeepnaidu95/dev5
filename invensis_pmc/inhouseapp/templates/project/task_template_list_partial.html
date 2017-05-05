@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Task Templates</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'task_template_add' %}" data-list-div="task_template_list_div" data-list-div-url="{% url 'task_templates_list' %}" data-title="Add Task Template" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="task_template_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Project Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for template in task_templates %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ template.service }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal" data-url="{% url 'task_template_edit' template.id %}" data-list-div="task_template_list_div" data-list-div-url="{% url 'task_templates_list' %}" data-title="Edit Task Template" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#billing_type_list_table').dataTable();
+})
+</script>   

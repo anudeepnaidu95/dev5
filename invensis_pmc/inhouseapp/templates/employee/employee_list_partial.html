@@ -1,0 +1,96 @@
+{% load i18n %} 
+{% load staticfiles %} 
+{% block head %}
+    <style>
+        div.dataTables_processing { z-index: 1; }
+    </style>
+{% endblock %}
+
+ <div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-10">  
+            <h4>Employee List</h4>
+        </div>
+         <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'employee_export' %}" data-list-div="employee_list_div" data-list-div-url="{% url 'employee_list' %}" data-title="Add Employee" data-target=".bs-example-modal-lg">export</button>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'employee_add' %}" data-list-div="employee_list_div" data-list-div-url="{% url 'employee_list' %}" data-title="Add Employee" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="employee_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Sl No</th>
+                    <th>Name</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Manager</th>
+                    <th>Department</th>
+                   <!-- <th>Experience</th> -->
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for k, emp_tuple in emp_dict.items %}
+                <tr class="even pointer">
+                    <td>{{k}}</td>
+                    <td class=" ">{{ emp_tuple.0.name }} </td>
+                    <td class=" ">{{ emp_tuple.0.user }}</td>
+                    <td class=" ">{{ emp_tuple.0.user.email }}</td>
+                    <td class=" ">
+                        {% for role in emp_tuple.1 %}
+                            {{ role.role }}
+                        {% endfor %}
+                    </td>
+                    <td class=" ">{{ emp_tuple.0.parent }}</td>
+                    <td class=" ">{{ emp_tuple.0.department }}</td>
+                    <!--
+                    <td class=" ">
+
+                        {% for ex in emp_tuple.2 %}
+                            {{ ex.experience_slab }}
+                        {% endfor %}
+                    </td>
+                    -->
+                    <td>
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'employee_edit' id=emp_tuple.0.id %}" data-list-div="employee_list_div" data-list-div-url="{% url 'employee_list' %}" data-title="Edit Employee" data-target=".bs-example-modal-lg">Edit </button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <!--
+                {% for emp in employees %}
+                <tr class="even pointer">
+                    <td class=" ">{{ emp.name }} </td>
+                    <td class=" ">{{ emp.user }}</td>
+                    <td class=" ">{{ emp.user.email }}</td>
+                    <td class=" ">{{ emp.role }}</td>
+                    <td class=" ">{{ emp.parent }}</td>
+                    <td class=" ">{{ emp.department }}</td>
+                    <td class=" ">{{ emp.emp_exp.name }}</td>
+                  
+                    <td>
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'employee_edit' id=emp.id %}" data-list-div="employee_list_div" data-list-div-url="{% url 'employee_list' %}" data-title="Edit Employee" data-target=".bs-example-modal-lg">Edit </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                -->
+            </tbody>
+          
+         
+        </table>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#employee_list_table').dataTable({
+            
+            processing: true,
+            serverSide: false,
+             
+        });
+    })
+
+</script>

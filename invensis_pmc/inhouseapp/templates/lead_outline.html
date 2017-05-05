@@ -1,0 +1,357 @@
+{% extends 'layout.html' %} 
+{% load i18n %} 
+{% load staticfiles %} 
+{% load crispy_forms_tags %} 
+{% load templates_extras %}
+{% block title %} 
+{% trans "CRM" %} 
+{% endblock %}
+
+{% block head %}
+    
+    {{ block.super }}
+
+<style>
+  body{ 
+    position: relative; 
+  }
+
+    
+.nav .active {
+  font-weight: bold;
+  background: #72bcd4;
+}
+
+.nav .nav {
+  display: none;
+}
+
+.nav .active .nav {
+  display: block;
+}
+
+.nav .nav a {
+  font-weight: normal;
+  font-size: .85em;
+}
+
+.nav .nav span {
+  margin: 0 5px 0 2px;
+}
+
+.nav .nav .active a,
+.nav .nav .active:hover a,
+.nav .nav .active:focus a {
+  font-weight: bold;
+  padding-left: 30px;
+  border-left: 5px solid black;
+}
+
+.nav .nav .active span,
+.nav .nav .active:hover span,
+.nav .nav .active:focus span {
+  display: none;
+}
+
+.loadingdiv
+{
+  background: url("img/ajax-loader.gif");
+    z-index: 1000;
+    margin: 300px auto;
+    padding: 10px;
+    width: 130px;
+    background-color: White;
+    border-radius: 10px;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -moz-opacity: 1;
+}
+.loadingdiv img
+{
+    height: 60px;
+    width: 60px;
+}
+
+.affix{
+  width:153px;
+}
+    </style>
+
+{% endblock head %}
+
+{% block body_attributes %}
+    
+    {{ block.super }}
+    data-spy="scroll" data-target="#navbar-example"
+{% endblock body_attributes %}
+
+{% block content %}
+
+    <div class="row">
+          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <ul class="nav nav-tabs" role="tablist" id="salesdash" ata-offset-top="120" data-spy="affix" style="margin-left: -245px; width: 162px;">
+        
+                <li role="presentation" class="active"> <a href="#service_list_div" aria-controls="Project Details List" role="tab" data-toggle="tab">Project Details List</a> </li>
+               
+                <li role="presentation"> <a href="#lead_task_list_div" aria-controls="Lead Task List" role="tab" data-toggle="tab">Lead Task List</a> </li>
+                
+                {% if request.user|has_group:"lead" %}
+                  <li role="presentation"> <a href="#staff_task_list_div" aria-controls="Assigned StaffTasks List" role="tab" data-toggle="tab">Assigned StaffTasks List</a> </li>
+                 <!--  <li role="presentation" > <a href="#lead_staff_task_list_div" aria-controls="StaffTasks" role="tab" data-toggle="tab">StaffTasks</a> </li> -->
+                {% else %}
+                  <li role="presentation" > <a href="#staff_task_list_div" aria-controls="StaffTasks List" role="tab" data-toggle="tab">StaffTasks List</a> </li>
+                {% endif %}                
+                
+                <li role="presentation"> <a href="#lead_task_hist_list_div" aria-controls="Lead Task History List" role="tab" data-toggle="tab"> Lead Task History List</a> </li>
+                <li  role="presentation"> <a href="#staff_task_hist_list_div" aria-controls="StaffTask History List" role="tab" data-toggle="tab"> StaffTask History List</a> </li>
+                <li  role="presentation"> <a href="#qc_template_list_div" aria-controls="QcTemplate List" role="tab" data-toggle="tab"> QcTemplate List</a> </li>
+                </ul>
+              </div>            
+          </div>
+        
+        <div class="col-md-10  col-sm-12 col-xs-12 marginleft tab-content" style="margin-left: -85px;width: 1450px;">
+              <div  role="tabpanel" class="tab-pane active" id="service_list_div"></div>
+              
+              <div  role="tabpanel" class="tab-pane" id="lead_task_list_div"></div>
+              <div  role="tabpanel" class="tab-pane " id="staff_task_list_div"></div>
+     <!--          <div  role="tabpanel"  class="tab-pane" id="lead_staff_task_list_div"><div> -->
+              <div  role="tabpanel" class="tab-pane" id="lead_task_hist_list_div"></div>
+              <div  role="tabpanel" class="tab-pane" id="staff_task_hist_list_div"></div>
+              <div  role="tabpanel" class="tab-pane" id="qc_template_list_div"></div>
+
+        </div>
+
+    </div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="mymodal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" id="closemodel" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
+              </div>
+
+               <div class="modal-body">
+                    <div class="container-fluid">
+                        
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+                                <div id="content_div"></div>
+                            </div>
+                        </div>
+                    </div>
+               </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-child" data-backdrop-limit="1"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-modal-parent="#mymodal" id="emp_expModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="closemodel" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div id="content_tasks_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+ $('.modal-child').on('show.bs.modal', function (event) {
+         var modalParent = $(this).attr('data-modal-parent');
+        $(modalParent).css('opacity', 0);
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var url = button.data('url') // Extract info from data-* attributes
+          var title = button.data('title') // Extract info from data-* attributes
+          list_div = button.data('list-div') // Extract info from data-* attributes
+          list_div_url = button.data('list-div-url') // Extract info from data-* attributes
+          var jqxhr = $.ajax({ 
+                url: url,
+                type: 'POST',
+                data: { }, 
+
+            })
+          .done(function(response) {
+            console.log(response)
+             //alert( "success" );
+            $('#content_tasks_div').html(response);
+            
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });  
+
+          
+          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+          var modal = $(this);
+          modal.find('.modal-title').text(title);
+
+          // modal.find('.modal-body input').val(recipient)
+        });
+
+         $('.modal-child').on('hidden.bs.modal', function () {
+        var modalParent = $(this).attr('data-modal-parent');
+        $(modalParent).css('opacity', 1);
+        
+    });
+
+
+    $(function() {
+    
+        // Assign handlers immediately after making the request,
+        // and remember the jqXHR object for this request
+       
+    
+        var jqxhr = $.ajax( "{% url 'service_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#service_list_div').html(response);
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });    
+
+
+
+
+          var jqxhr = $.ajax( "{% url 'lead_tasks_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#lead_task_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+
+          var jqxhr = $.ajax( "{% url 'staff_task_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#staff_task_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+
+          
+          var jqxhr = $.ajax( "{% url 'lead_tasks_hist_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#lead_task_hist_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+          var jqxhr = $.ajax( "{% url 'staff_task_hist_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#staff_task_hist_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+          var jqxhr = $.ajax( "{% url 'qc_template_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#qc_template_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+     
+            
+var list_div = null;
+var list_div_url=null;    
+    
+        $('.bs-example-modal-lg').on('show.bs.modal', function (event) {
+        
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var url = button.data('url') // Extract info from data-* attributes
+          var title = button.data('title') // Extract info from data-* attributes
+          list_div = button.data('list-div') // Extract info from data-* attributes
+          list_div_url = button.data('list-div-url') // Extract info from data-* attributes
+           
+            $('#content_div').html("");
+    
+        var jqxhr = $.ajax( url )
+          .done(function(response) {
+            // alert( "success" );
+            $('#content_div').html(response);
+            $(".spinner").show();
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });  
+
+          var modal = $(this);
+          modal.find('.modal-title').text(title);
+
+          // modal.find('.modal-body input').val(recipient)
+        });
+    
+    
+        $('.bs-example-modal-lg').on('hidden.bs.modal', function (e) {
+
+            if (list_div_url && list_div) {
+
+              var jqxhr = $.ajax( list_div_url )
+              .done(function(response) {
+                // alert( "success" );
+                $('#' + list_div).html(response);
+                
+              })
+              .fail(function() {
+                alert( "error" );
+              })
+              .always(function() {
+                // alert( "complete" );
+              });    
+            }
+          // do something...
+        });
+    
+    
+    });
+</script>
+{% endblock %}

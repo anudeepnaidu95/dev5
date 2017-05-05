@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Modify" %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{% trans 'Here you can modify your account.' %}</h1>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            {% url 'account_modify' as account_login %}
+            {% include "_form.html" with form=login_form action=account_login method="post" %}
+        </div>
+    </div>
+{% endblock %}

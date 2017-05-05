@@ -1,0 +1,63 @@
+{% load i18n %} 
+{% load staticfiles %} 
+<style>
+.loading img{
+
+        z-index: 1000;
+        margin: auto;
+        padding: 10px;
+        width: 80px;
+        background-color: White;
+        border-radius: 10px;
+        filter: alpha(opacity=100);
+        opacity: 1;
+        -moz-opacity: 1;
+}
+
+</style>
+
+
+  
+   <div class="panel panel-default">
+     <div class="panel-heading">
+            
+        
+            <thead>
+            
+                <tr >
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+
+                    <p><label>Company:</label><span>{{ customer.title }}</span></p>
+                    <p><label>Description:</label><span>{{ customer.description }}</span></p>
+                    <p><label>Contact Person:</label><span>{{ customer.contact_name }}</span></p>
+                    <p><label>Designation:</label><span>{{ customer.designation }}</span></p>
+                    <p><label>Email:</label><span>{{ customer.email }}</span></p>
+                    <p><label>Phone:</label><span>{{ customer.phone }}</span></p> 
+                    <p><label>AddressLine1:</label><span>{{ customer.addressline1 }}</span></p>
+                    <p><label>AddressLine2:</label><span>{{ customer.addressline2 }}</span></p>
+                    <p><label>City:</label><span>{{ customer.city }}</span></p>
+                    <p><label>Zipcode:</label><span>{{ customer.zipcode }}</span></p>
+                    <p><label>State:</label><span>{{ customer.state }}</span></p>
+                    <p><label>Country:</label><span>{{ customer.country }}</span></p>
+                    </div>
+                    <p><label>Requirement:</label><span>{{ customer.requirement }}</span></p>
+                    <p><label>Industry:</label><span>{{ customer.industry }}</span></p>
+                    <p><label>Services:</label><span>{{ customer.services }}</span></p>
+                    <p><label>Owner:</label><span>{{ customer.owner }}</span></p>
+                    <p><label>Lead Source:</label><span>{{ customer.lead_source }}</span></p>
+                    <p><label>Sales Rep:</label><span>{{ customer.sales_rep }}</span></p>
+                    <p><label>Other Lead Source:</label><span>{{ customer.oper_lead_source }}</span></p>
+                    <p><label>Created_by:</label><span>{{ customer.created_by }}</span></p>
+                    <p><label>Currency:</label><span>{{customer.currency}}</span></p>
+                    <p><label>Last Invoice No:</label><span>{{ customer.last_invoice_no}}</span></p>
+                    <p><label>Invoice Format:</label><span>{{customer.invoice_format}}</span></p>
+                    <p><label>Company Name Invoice:</label><span>{{ customer.company_name_invoice }}</span></p>
+                   
+                    </th>
+                </tr>
+            </thead>
+            
+           
+    </div>
+   
+</div>

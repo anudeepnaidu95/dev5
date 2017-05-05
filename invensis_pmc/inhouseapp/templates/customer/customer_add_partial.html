@@ -1,0 +1,210 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+ <style>
+    #form_ajax_error, .errorlist {
+        color: red;
+    }
+</style>
+
+<div class="box">
+    <div class="box-body">
+        <div id="errorid" style="display:; color:red"></div>
+
+        {% if is_edit_mode %}
+            
+            <form id="myform" action="{% url 'customer_edit' id %}" method="post"   class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+             
+        {% else %}
+
+            <form id="myform" action="{% url 'customer_add' %}" method="post" class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+
+        {% endif %}
+        
+
+             {{ form.non_field_errors }}
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
+      
+            {{ form.title|as_crispy_field }}
+     
+            {{ form.description|as_crispy_field}}
+
+            {{ form.contact_name|as_crispy_field}}
+
+            {{ form.designation|as_crispy_field}}
+       
+            {{ form.requirement|as_crispy_field}}
+        
+            {{ form.industry|as_crispy_field}}
+            
+            {{ form.services|as_crispy_field}}
+
+            {{ form.currency|as_crispy_field}}
+         </div>
+                        
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+                    
+            {{ form.email|as_crispy_field}}
+           
+            {{ form.phone|as_crispy_field}}
+            
+            {{ form.addressline1|as_crispy_field}}
+
+            {{ form.addressline2|as_crispy_field}}
+        
+            {{ form.country|as_crispy_field}}
+           
+            {{ form.state|as_crispy_field}}
+
+            {{ form.city|as_crispy_field}}
+           
+            {{ form.zip_code|as_crispy_field}}
+
+            {{ form.company_name_invoice|as_crispy_field}}
+              
+            {{ form.invoice_format|as_crispy_field}}
+              
+            {{ form.last_invoice_no|as_crispy_field}}
+          
+       </div>   
+        
+        <div id="form_ajax_error" style="display:none; color:red">
+            <span>Can not submit data due to errors.</span>
+        </div>
+        <div id="form_ajax" style="display:none; color:green">
+            <span>Form submit successfully.</span>
+        </div>
+       
+        <div id="loading" style="display:none;">
+            <span id="load_text">loading...</span>
+        </div>
+
+       
+
+       <div class='col-lg-12'>
+            <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+        </div>
+
+      </form>
+      
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('select[name=industry]').change(function(){
+        var industry_id = $(this).val();
+        
+        $.ajax({
+            url: "{% url 'get_services' %}",
+            data : {'industry_id' : industry_id},
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                    console.log(data)
+                    for( var i=0; i<data.length; i++){
+                        if(i==0){
+
+                            $('#id_services').html('<select name="services" id="id_services"><option value=' + data[i]['pk']+' > ' + data[i]["title"] + '</option> </select>')
+                        }else {
+                            $('#id_services').append('<option value='  + data[i]['pk']+' > ' + data[i]["title"] + '</option>')
+                        }
+                     }
+            }
+ 
+        })
+    })
+
+});
+
+    
+$(document).ready(function() {
+    
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal('hide');
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="customer_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+
+            $('#myform').ajaxForm(options);
+        });
+
+       
+
+
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+            
+            //attach keypress to input
+            $('#id_phone ').keydown(function(event) {
+                // Allow special chars + arrows 
+                if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9||event.keyCode == 32 ||event.keyCode == 189 ||event.keyCode == 190  
+                    || event.keyCode == 27 || event.keyCode == 13 ||event.keyCode == 187 ||event.keyCode == 107 ||event.keyCode == 109 ||event.keyCode == 51
+                    || (event.keyCode == 65 && event.ctrlKey === true) 
+                    || (event.keyCode >= 35 && event.keyCode <= 39)){
+                        return;
+                }else {
+                    // If it's not a number stop the keypress
+                    if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                        event.preventDefault(); 
+                    }   
+                }
+            });
+            
+        });
+</script>

@@ -1,0 +1,837 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src=" {% static 'js/jquery-ui.js' %}"></script>
+<!Doctype html>
+<html>
+<head>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+
+<link href="{% static  'css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static  'css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+{% include 'layout.head.html' %}
+{% include 'layout.navbar.html' %}
+
+
+<style>
+.zc-ref {
+  display: none;
+}
+
+</style>
+
+<style>
+
+  #myDiv{
+  height:450px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  width:100%;
+
+  
+  }
+  #myDiv1{
+  height:450px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  width:100%;
+
+  
+  }
+  .chart-section{
+  border:1px solid #000;
+  min-height:491px;
+  margin:20px 0px;
+  max-width:100%;
+  }
+  
+  .canvasjs-chart-credit, .highcharts-credits {
+  display:none !important;
+  }
+  .border-top{border-top:3px solid brown !important;padding-top:10px;}
+  #raphael-paper-5{left:60 !important;}
+  
+  .list-inline>li {
+    display: inline-block;
+    padding-right: 3px;
+    padding-left: 48px;
+}
+  .list-inline1>li {
+    display: inline-block;
+    padding-right: 3px;
+    padding-left: 125px;
+}
+  
+</style>
+</head>
+
+
+<body>
+<div class="container-fluid">
+  <div>
+    <h2 class="border-bottom">Opportunity Dashboard<h2>
+  </div>
+
+  {% if is_edit_mode %}
+  
+  <form id="dashDatesForm" action="{% url 'stats_dashboard_list' id %}" method="post" id="dashDates_edit"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+
+  {% else %}
+
+  <form id="dashDatesForm" action="{% url 'stats_dashboard_list'%}" method="post" id="new_dashDates"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+  {% endif %}
+  
+  <div id="exception_error" style="display:none; color:red"></div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{ form.non_field_errors }}
+        <div class ="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+            {{ form.start_date|as_crispy_field }}
+        </div>
+        <div class ="col-xs-6 col-sm-6 col-md-3 col-lg-offset-1 col-lg-3">
+            {{ form.end_date|as_crispy_field }}
+        </div>
+        
+        <div class ="col-xs-6 col-sm-6 col-md-offset-1 col-md-1 col-lg-offset-1 col-lg-1" style="padding-top: 27px;margin-left: 60px;">
+          <input type="button" value="GO" id="goBtn" class='btn btn-success pull-right' id="generate"/>
+        </div>
+    </div> 
+    
+  </form>
+    
+    <div class="row">
+      <div class="col-md-4">      
+      <h3 class="border-top">Leads Converted By Week<h3>
+      <div class="chart-section">
+        <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+        </div>
+        <!--/chart-section -->
+      </div>
+      <div class="col-md-4" >
+      <h3 class="border-top">opportunities by stage</h3>
+      <div class="chart-section">
+        <div id="containers"></div>
+        
+        <ul class="list-inline" style="border:1px solid #000;padding:1px;margin:9px;width:96%">
+        <h4 align="center"><b>Stage</b></h4>
+    <li style="padding:3px 0 4px 80px" ><img src="blue.png" /> Prospecting &nbsp;&nbsp;&nbsp;&nbsp; </li>
+    <li ><img src="green.png" /> Trial &nbsp;&nbsp;&nbsp;&nbsp;</li>
+    <li><img src="yellow.png" />Negotiation</li>
+</ul>
+        </div>
+        
+        <!--/chart-section -->
+      </div>
+      <div class="col-md-4">
+      <h3 class="border-top">Revenue Closed this Quarter</h3>
+      <div class="chart-section">
+        <div id="chart-container">FusionCharts XT will load here!</div>
+        </div>
+        <!--/chart-section -->
+        </div>
+      </div>
+      <div class="row ">
+        
+        <div class="col-md-4">
+        <h3 class="border-top">opportunities closed per month won/lost</h3>
+        <div class="chart-section">
+        <div id='myChart'><a class="zc-ref" ></a></div>
+        <ul class="list-inline1" style="border:1px solid #000;padding:1px;margin:9px;width:96%">
+        <h4 align="center"><b>Stage</b></h4>
+    <li ><img src="blue.png" />Closed Won &nbsp;&nbsp;&nbsp;&nbsp; </li>
+    <li><img src="green.png" /> Closed Lost &nbsp;&nbsp;&nbsp;&nbsp;</li>
+
+</ul>
+        </div>
+        <!--/chart-section -->
+        </div>
+        
+        <div  class="col-md-4">
+        <h3 class="border-top">Top 10 Open Opportunities</h3>
+        <div class="chart-section">
+        <div id="myDiv" >
+        
+        <table class="table table-strip">
+        <thead>
+        <tr>
+          <th>Opportunity Name</th>
+          
+        </tr>
+        </thead>
+        <tbody id="addRecords">
+
+        </tbody>
+        </table>
+        
+        
+        </div>
+        <div >
+          <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'all_open_leads_list' %}" data-title="All Open Opportunities" data-target="#viewMore">View More</button>
+        </div>
+        </div>
+        <!--/chart-section -->
+      </div>
+          <div  class="col-md-4">
+          <h3 class="border-top">Last 10 Won Opportunities</h3>
+          <div class="chart-section">
+          <div id="myDiv1" >
+          
+            <table class="table table-strip">
+            <thead>
+            <tr>
+              <th>Opportunity Name</th>
+              
+            </tr>
+            </thead>
+            <tbody id="addRecords1">
+
+            </tbody>
+            </table>
+          </div>
+
+            <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'all_won_leads_list' %}" data-title="All Won Opportunities" data-target="#viewMore">View More</button>
+
+          </div>
+        <!--/chart-section -->
+          </div>
+      </div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="viewMore">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" id="closemodel" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
+              </div>
+
+               <div class="modal-body">
+                    <div class="container-fluid">
+                        
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+                                <div id="content_div"></div>
+                            </div>
+                        </div>
+                    </div>
+               </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+  
+
+<script type="text/javascript">
+  
+  $('.bs-example-modal-lg').on('show.bs.modal', function (event) {
+        
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var url = button.data('url') // Extract info from data-* attributes
+          var title = button.data('title') // Extract info from data-* attributes
+          list_div = button.data('list-div') // Extract info from data-* attributes
+          list_div_url = button.data('list-div-url') // Extract info from data-* attributes
+
+          var jqxhr = $.ajax( url )
+            .done(function(response) {
+              // alert( "success" );
+              $('#content_div').html(response);
+              $(".spinner").show();
+            })
+            .fail(function() {
+              alert( "error" );
+            })
+            .always(function() {
+              // alert( "complete" );
+            });  
+    
+          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+          var modal = $(this);
+          modal.find('.modal-title').text(title);
+
+          // modal.find('.modal-body input').val(recipient)
+        });
+    
+    
+        $('.bs-example-modal-lg').on('hidden.bs.modal', function (e) {
+
+            if (list_div_url && list_div) {
+
+              var jqxhr = $.ajax( list_div_url )
+              .done(function(response) {
+                // alert( "success" );
+                $('#' + list_div).html(response);
+                
+              })
+              .fail(function() {
+                alert( "error" );
+              })
+              .always(function() {
+                // alert( "complete" );
+              });    
+            }
+          // do something...
+        });
+  
+
+</script>
+  
+ 
+<!-- check whether all of this is open source ???? -->
+
+<script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/funnel.js"></script>
+<script type="text/javascript" src="http://static.fusioncharts.com/code/latest/fusioncharts.js"></script>
+<script type="text/javascript" src="http://static.fusioncharts.com/code/latest/themes/fusioncharts.theme.fint.js?cacheBust=56"></script>
+<script src= "https://cdn.zingchart.com/zingchart.min.js"></script>
+
+<script>
+
+
+  zingchart.THEME="classic";
+  var myConfig = 
+        {
+            "type": "bar",
+            "stacked": true,
+            "stack-type": "normal",
+            "background-color": "#FFFFFF",
+            "title": {
+              
+        "text":"",
+      
+                "font-family": "arial",
+                "x": "40px",
+                "y": "5px",
+                "align": "left",
+                "bold": false,
+                "font-size": "16px",
+                "font-color": "#000000",
+                "background-color": "none",
+        
+            },
+      
+            
+            "subtitle": {
+                
+                "font-family": "arial",
+                "x": "175px",
+                "y": "5px",
+                "align": "left",
+                "bold": false,
+                "font-size": "16px",
+                "font-color": "#7E7E7E",
+                "background-color": "none"
+            },
+            "plot": {
+                "bar-width": "25px",
+                "hover-state": {
+                    "visible": false
+                },
+                "animation":{
+                  "delay":300,
+                  "sequence":1
+                }
+            },
+            
+            "scale-x": {
+        
+                "values": [
+                    "JAN",
+                    "FEB",
+                    "MAR",
+                    "APR",
+                    "MAY",
+                    "JUN",
+                    "JUL",
+                    "AUG",
+                    "SEP",
+                    "OCT",
+                    "NOV",
+                    "DEC"
+                ],
+                "line-color": "#7E7E7E",
+                "tick": {
+                    "visible": false
+                },
+                "guide": {
+                    "visible": false
+                },
+        "label": {
+                    "text": "Closed Date",
+                    "font-family": "Arial",
+                    "font-weight": "normal",
+                    "font-size": "17px",
+                    "font-color": "#000",
+                    "padding-top": "30px"
+                },
+                "item": {
+                    "font-family": "arial",
+                    "font-color": "#8B8B8B"
+                }
+        
+            },
+            "scale-y": {
+                "values": "0:50:5",
+                "short": true,
+                "line-color": "#7E7E7E",
+                "tick": {
+                    "visible": false
+                },
+                "guide": {
+                    "line-style": "solid"
+                },
+        "label": {
+                    "text": "Record Count",
+                    "font-family": "Arial",
+                    "font-weight": "normal",
+                    "font-size": "17px",
+                    "font-color": "#000",
+                    "padding-top": "20px"
+                },
+                "item": {
+                    "font-family": "arial",
+                    "font-color": "#8B8B8B"
+                }
+            },
+            "series": [
+                {
+                    "values": [
+                        1,2,3,4,5,6,7,20
+                    ],
+                    "background-color": "#40bf40"
+                },
+                {
+                    "values": [
+                        1,2,3,4,5,6,7,10
+                    ],
+                    "background-color": "#0077b3"
+                },
+               
+            ],
+            "tooltip": {
+                "visible": false
+            }
+      
+        }
+;
+ 
+zingchart.render({ 
+  id : 'myChart', 
+  data : myConfig, 
+  height: 400, 
+  width: 500
+});
+</script>
+
+<script type="text/javascript">
+  function revenue_range(data){
+  FusionCharts.ready(function(){
+    //console.log("revenue_range_list"+data)
+
+ $.each($.parseJSON(data),function(index,value){ 
+    var fusioncharts = new FusionCharts({
+    type: 'angulargauge',
+    renderAt: 'chart-container',
+    width: '400',
+    height: '250',
+    dataFormat: 'json',
+    dataSource: {
+        "chart": {
+            "caption": "",
+            "subcaption": "sum of amount",
+            "lowerLimit": "0",
+            "upperLimit": "10000",
+            "lowerLimitDisplay": "$0",
+            "upperLimitDisplay": "$10000",
+            "showValue": "1",
+            "valueBelowPivot": "1",
+            "theme": "fint",
+            "numberPrefix": "$"
+      
+      
+        },
+        "colorRange": {
+            "color": [{
+                "minValue": "0",
+
+                "maxValue":value['red_region'],
+                "code": "#8B0000"
+            }, {
+                "minValue": value['red_region'],
+
+                "maxValue":value['yellow_region'],
+
+                "code": "#f8bd19"
+            }, {
+                "minValue": value['yellow_region'],
+
+                "maxValue":value['green_region'],
+                "code": "#32CD32"
+            }]
+        },
+        "dials": {
+            "dial": [{
+                "value": value['total_amount']
+            }]
+        }
+    }
+}
+);
+    fusioncharts.render();
+
+   });
+});
+}
+
+</script>
+<script>
+
+function leads_by_status(data) {
+    console.log(data)
+    Highcharts.setOptions({
+        colors: ['#058DC7', '#32CD32', '#FF8C00', ]
+    });
+
+    Highcharts.chart('containers', {
+        chart: {
+            type: 'funnel',
+            marginRight:100,
+            marginLeft:100,
+            events: {
+              load: function() {
+                var chart = this;
+                Highcharts.each(chart.series[0].data, function(p, i) {
+                  p.dataLabel.attr({
+                    x: (chart.plotWidth - chart.plotLeft) / 2,
+                    'text-anchor': 'middle'
+                  })
+                })
+              },
+              redraw: function() {
+                var chart = this;
+                Highcharts.each(chart.series[0].data, function(p, i) {
+                  p.dataLabel.attr({
+                    x: (chart.plotWidth - chart.plotLeft) / 2,
+                    'text-anchor': 'middle'
+                  })
+                })
+              }
+            }
+      
+        },
+    
+        title: {
+            text: '',
+            x: -80
+        },
+    
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                  
+                    format: '<b>{point.name}</b> ({point.y:,.0f})',
+                    distance:0,
+                    softConnector: true
+                },
+                neckWidth: '30%',
+                neckHeight: '20%'
+
+                //-- Other available options
+                // height: pixels or percent
+                // width: pixels or percent
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            name: 'Enquires',
+            data: data
+        }]
+    });
+};
+</script>
+
+
+<script>
+function leads_by_week_list(mydata) {
+    var newDataPoints = []
+    var newDataDict = {}
+    $.each($.parseJSON(mydata),function(index,value){ 
+        console.log(index);
+        console.log(value['x'])
+        console.log(value['y'])
+        newDataPoints.push({ x: new Date(value['x']), y: value['y'] })
+       });
+      console.log(newDataPoints)
+
+      var chart = new CanvasJS.Chart("chartContainer", 
+
+        {
+          title:{
+            text: ""
+          },
+          axisX:{  
+    //Try Changing to MMMM
+            valueFormatString: "YYYY-MM-DD",
+             title:"Converted date",
+             titleFontSize: 20,
+             labelFontSize: 10,
+             interval:1
+             
+          },
+
+          axisY: {
+             valueFormatString: "0",
+             title: "Record Count",
+             titleFontSize: 15,
+          },
+       
+          data: [
+          {    
+            type: "line",
+            lineThickness: 2,
+            dataPoints: newDataPoints
+          }    
+          ]
+        });
+
+    chart.render();
+ 
+  
+}
+    $('#goBtn').click(function(){
+    var start_date = $('#id_start_date').val();
+    var end_date = $('#id_end_date').val();
+    alert(start_date+""+end_date)
+    $.ajax({
+        url: '{% url "lead_enquires_stat" %}',
+        type: 'POST',
+        data: {start_date:start_date,end_date:end_date},
+      })
+      .done(function(data) {
+        // append tr in tbody provide id to tbody
+        //$('#addRecords').append(data['leads_ten_enquires']);
+        leads_by_week_list(JSON.stringify(data['leads_by_week_list']))
+        revenue_range(JSON.stringify(data['revenue_range_list']))
+
+      })
+      .fail(function() {
+        console.log("error");
+      })
+      .always(function() {
+        console.log("complete");
+      });
+
+    })
+</script>
+</body>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script> 
+      <script>
+        
+        //SELECT * FROM yourtable LIMIT $start ,$limit
+      function getRecords(start,limit){
+ /*     $.ajax({
+        url: '{% url "lead_enquires_stat" %}',
+        type: 'POST',
+        data: {start:start,limit: limit},
+      })
+      .done(function(data) {
+        // append tr in tbody provide id to tbody
+        console.log(data)
+        $('#addRecords').append(data['leads_ten_enquires']);
+
+      })
+      .fail(function() {
+        console.log("error");
+      })
+      .always(function() {
+        console.log("complete");
+      });
+
+      }*/
+      jQuery(document).ready(function($) {
+        // by default records  start
+        var start=0; // statring point
+        var limit=10; // how many records you want to display by default
+        getRecords(start,limit);
+        // by default records  end
+
+
+        // create button loadmore and provide id loadMore
+        $('#load').on('click', '#loadMore', function(event) {
+          event.preventDefault();
+          //count all tr inside of tbody using id addRecords
+          var count=$('#addRecords').find('tr').length;
+          //get records
+          getRecords(count,limit);
+          // myDiv we are using for scroll start
+          var main = $("#myDiv");
+          main.animate({scrollTop:main[0].scrollHeight}, '3000');
+          // end myDiv
+          
+        });
+        // create button loadless and provide id loadLess
+        $('#load').on('click', '#loadLess', function(event) {
+          event.preventDefault();
+          // Count all tr inside of tbody using id addRecords
+          var count=$('#addRecords').find('tr').length;
+          // Records should be more then default given limit
+          if(count>limit){
+            $('#addRecords').find('tr').each(function(index, el) {
+              // remove records
+              if(index>=count-limit && index<count){
+                $(this).remove();
+              }
+
+            });
+          }
+          // myDiv we are using for scroll
+          var main = $("#myDiv");
+          var tr_height= $('#addRecords').find('tr').height();
+          main.animate({scrollTop:main[0].scrollHeight-tr_height*limit}, '500');
+          // end myDiv
+          
+          
+        });
+      });
+    }
+      </script>
+      
+      
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script> 
+      <script>
+        
+        //SELECT * FROM yourtable LIMIT $start ,$limit
+      function getRecords(start,limit){
+        var start_date = $('#id_start_date').val();
+        var end_date = $('#id_end_date').val();
+      $.ajax({
+        url: '{% url "lead_enquires_stat" %}',
+        type: 'POST',
+        data: {start_date:start_date,end_date:end_date},
+      })
+      .done(function(data) {
+        console.log(data)
+        // append tr in tbody provide id to tbody
+        $.each(data['leads_ten_enquires'], function(index, value) {
+            var row = '<tr>';
+            $.each(value, function (j, e) {
+                row += '<td>' + e + '</td>';
+            });
+            row += '</tr>';
+            $('#addRecords').append(row);
+
+          });
+
+          $.each(data['leads_ten_won_enquires'], function(index, value) {
+            var row = '<tr>';
+            $.each(value, function (j, e) {
+                row += '<td>' + e + '</td>';
+            });
+            row += '</tr>';
+            $('#addRecords1').append(row);
+
+          });
+        leads_by_week_list(JSON.stringify(data['leads_by_week_list']))
+        leads_by_status(data['leads_by_status'])
+        revenue_range(JSON.stringify(data['revenue_range_list']))
+      })
+      .fail(function() {
+        console.log("error");
+      })
+      .always(function() {
+        console.log("complete");
+      });
+
+      }
+      jQuery(document).ready(function($) {
+        // by default records  start
+        var start=0; // statring point
+        var limit=10; // how many records you want to display by default
+        getRecords(start,limit);
+        // by default records  end
+
+
+        // create button loadmore and provide id loadMore
+        $('#load1').on('click', '#loadMore1', function(event) {
+          event.preventDefault();
+          //count all tr inside of tbody using id addRecords
+          var count=$('#addRecords1').find('tr').length;
+          //get records
+          getRecords(count,limit);
+          // myDiv we are using for scroll start
+          var main = $("#myDiv1");
+          main.animate({scrollTop:main[0].scrollHeight}, '3000');
+          // end myDiv
+          
+        });
+        // create button loadless and provide id loadLess
+        $('#load1').on('click', '#loadLess1', function(event) {
+          event.preventDefault();
+          // Count all tr inside of tbody using id addRecords
+          var count=$('#addRecords1').find('tr').length;
+          // Records should be more then default given limit
+          if(count>limit){
+            $('#addRecords1').find('tr').each(function(index, el) {
+              // remove records
+              if(index>=count-limit && index<count){
+                $(this).remove();
+              }
+
+            });
+          }
+          // myDiv we are using for scroll
+          var main = $("#myDiv1");
+          var tr_height= $('#addRecords1').find('tr').height();
+          main.animate({scrollTop:main[0].scrollHeight-tr_height*limit}, '500');
+          // end myDiv
+          
+          
+        });
+      });
+      
+      //Display none for chart content
+      $('#myChart-license-text').find("a").css({"display":"none"});     
+      
+      </script>
+
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+     $('.dateinput').datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1990:2050",
+    });
+})
+
+</script>
+ 
+</html>

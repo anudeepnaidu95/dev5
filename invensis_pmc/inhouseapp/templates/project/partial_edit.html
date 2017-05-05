@@ -1,0 +1,250 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% if is_edit_mode %}
+    <form id="taskForm" action="{% url 'task_edit' id %}" method="post" name="edit_task"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    
+{% else %}
+    <form id="taskForm" action="{% url 'task_add' %}" method="post" name="new_task"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+
+<div class='content'>
+    
+    <ul class="nav nav-tabs" role="tablist">
+        <li  class="active"><a href="#add_task" role="tab" data-toggle="tab">Add Task</a></li>
+        <li><a href="#lead_task"  role="tab" data-toggle="tab">Lead Task</a></li>
+    </ul>
+
+    <div class='tab-content'>
+        <div class="tab-pane active" id="add_task">
+            {{ form.non_field_errors }}
+
+            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
+                {{ form.title|as_crispy_field }}
+
+                {{ form.service|as_crispy_field }}
+
+                {{ form.folderpath|as_crispy_field}}
+
+                {{ form.no_of_txs|as_crispy_field}}
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+                {{ form.scope_of_work|as_crispy_field}}
+            </div>
+
+           
+            {{ task_resource_formset_forms.management_form }}
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-bordered " id="task_resource_plan_formset">
+                    <thead>
+                        <tr>
+                         <th>Experience Slab</th>
+                         <th>Number of Resources</th>
+                         <th>Output Count Per Resources</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task_resource_form in task_resource_formset_forms.forms %}
+                            {{task_resource_form.id}}
+                                {{ task_resource_form.non_field_errors }}
+                                {{ task_resource_form.errors }}
+                        <tr>
+                            <td>{{task_resource_form.experience_slab}}</td>
+                            <td>{{task_resource_form.number_of_resources}}</td>
+                            <td>{{task_resource_form.output_count_per_resource}}</td>
+
+                            {% if task_resource_formset_forms.can_delete %}
+                            <td>{{ task_resource_form.DELETE }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+            </div>
+ 
+        </div>
+
+        <div class="tab-pane" id="lead_task">
+            <div class="panel panel-default">
+                <div class="panel-body" id="div_lead_task">   
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5" id="lead_task_formsets">
+                        {% for lead_task_form in lead_task_formset_forms.forms %} {{lead_task_form.id}}
+                            {{ lead_task_form.non_field_errors }}
+                            {{ lead_task_form.errors }}
+
+                            {{ lead_task_form.lead |as_crispy_field}}
+                            {{ lead_task_form.filename |as_crispy_field}}
+                            {{ lead_task_form.no_of_txs |as_crispy_field}}
+
+
+                            {% if lead_task_formset_forms.can_delete %}
+                                {{ lead_task_form.DELETE }}
+                            {% endif %}
+
+                        {% endfor %}
+                        {{ lead_task_formset_forms.management_form }}
+                    </div>
+                    
+                    <div class="col-lg-8 lead_task_resource_plan_formset">
+                        
+                        <table class="table table-bordered " id="lead_task_resource_plan_formset" >
+                            <thead>
+                                <tr>
+                                 <th>Experience Slab</th>
+                                 <th>Number of Resources</th>
+                                 <th>Output Count Per Resources</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lead_task_resource_form in lead_task_resource_formset_forms.forms %} {{lead_task_resource_form.id}}
+                                        {{ lead_task_resource_form.non_field_errors }}
+                                        {{ lead_task_resource_form.errors }}
+                                <tr>
+                                    <td>{{lead_task_resource_form.experience_slab}}</td>
+                                    <td>{{lead_task_resource_form.number_of_resources}}</td>
+                                    <td>{{lead_task_resource_form.output_count_per_resource}}</td>
+
+                                    {% if lead_task_resource_formset_forms.can_delete %}
+                                    <td>{{ lead_task_resource_form.DELETE }}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                                {{ lead_task_resource_formset_forms.management_form }}
+                            </tbody>
+
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success pull-right" text="submit" />
+        <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+    </div>
+</div>
+
+ 
+
+</form>
+
+
+
+<script type="text/javascript">
+
+
+$('#task_resource_plan_formset tbody tr').formset({
+    prefix: '{{ task_resource_formset_forms.prefix }}',
+    deleteText: 'X',
+});
+
+
+$('#lead_task').formset({
+    prefix: '{{ lead_task_formset_forms.prefix }}',
+    deleteText: 'X',
+});
+
+$('.lead_task_resource_plan_formset table tbody tr').formset({
+    prefix: '{{ lead_task_resource_formset_forms.prefix }}',
+    deleteText: 'X',
+});
+
+
+
+
+
+
+// prepare the form when the DOM is ready 
+$(document).ready(function() { 
+    var options = { 
+        // target:        '#output1',   // target element(s) to be updated with server response 
+        beforeSubmit:  showRequest,  // pre-submit callback 
+        success:       showResponse,  // post-submit callback 
+ 
+        error: ShowValidation,
+        // other available options: 
+        //url:       url         // override for form's 'action' attribute 
+        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
+        //dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
+        // clearForm: true ,        // clear all form fields after successful submit 
+        //resetForm: true        // reset the form after successful submit 
+ 
+        // $.ajax options can be used here too, for example: 
+        //timeout:   3000 
+    }; 
+ 
+    // bind form using 'ajaxForm' 
+    $('#taskForm').ajaxForm(options); 
+}); 
+
+function ShowValidation(response) {
+
+    // alert(response.responseText);
+
+    error_dict = JSON.parse(response.responseText);
+    // debugger;
+    for(var error in error_dict)
+    {
+
+
+        $('#div_id_' + error).append('<p style="color:red;" class="task_error">' + error_dict[error] + '</p>') ;
+    }
+
+    // resp =JSON.parse(response);
+
+
+    // body...
+}
+ 
+// pre-submit callback 
+function showRequest(formData, jqForm, options) { 
+    // formData is an array; here we use $.param to convert it to a string to display it 
+    // but the form plugin does this for you automatically when it submits the data 
+
+    $('.task_error').remove();
+
+    var queryString = $.param(formData); 
+ 
+    // jqForm is a jQuery object encapsulating the form element.  To access the 
+    // DOM element for the form do this: 
+    // var formElement = jqForm[0]; 
+ 
+    // alert('About to submit: \n\n' + queryString); 
+ 
+    // here we could return false to prevent the form from being submitted; 
+    // returning anything other than false will allow the form submit to continue 
+
+
+
+    return true; 
+} 
+ 
+// post-submit callback 
+function showResponse(responseText, statusText, xhr, $form)  { 
+    // for normal html responses, the first argument to the success callback 
+    // is the XMLHttpRequest object's responseText property 
+ 
+    // if the ajaxForm method was passed an Options Object with the dataType 
+    // property set to 'xml' then the first argument to the success callback 
+    // is the XMLHttpRequest object's responseXML property 
+ 
+    // if the ajaxForm method was passed an Options Object with the dataType 
+    // property set to 'json' then the first argument to the success callback 
+    // is the json data object returned by the server 
+ 
+    // alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+    //     '\n\nThe output div should have already been updated with the responseText.'); 
+
+
+    // Assign handlers immediately after making the request,
+    // and remember the jqXHR object for this request
+    //sdebugger;
+
+   
+}     
+        
+</script>

@@ -1,0 +1,45 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>WorkWeeks Types</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'workweek_add' %}" data-list-div="workweek_list_div" data-list-div-url="{% url 'workweeks_list' %}" data-title="Add Workweek Type" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="workweek_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Billing Type Name</th>
+                    <th>Descrption</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for work in workweeks %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ work.title }}</td>
+                        <td class=" ">{{ work.no_of_days }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal" data-url="{% url 'workweek_edit' work.id %}" data-list-div="workweek_list_div" data-list-div-url="{% url 'workweeks_list' %}" data-title="Edit Workweek Type" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src ="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"></script>
+<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js</s"</script>
+
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js">
+
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#workweek_list_table').dataTable();
+})
+</script>   

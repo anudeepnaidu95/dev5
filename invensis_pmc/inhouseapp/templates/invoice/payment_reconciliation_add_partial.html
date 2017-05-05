@@ -1,0 +1,131 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+ <style>
+    #form_ajax_error, .errorlist {
+        color: red;
+    }
+</style>
+
+{% if is_edit_mode %}
+    
+<form id="paymentForm" action="{% url 'paymant_reconciliation_edit' id %}" method="post" name="edit-country"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% else %}
+
+<form id="paymentForm" action="{% url 'paymant_reconciliation_add' %}" method="post" name="payment"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+     <div id="form_ajax_error" style="display:none; color:red">
+        <span>Can not submit data due to errors.</span>
+    </div>
+    <div id="form_ajax" style="display:none; color:green">
+        <span>Form submit successfully.</span>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {{ form.non_field_errors }}
+        <div class="col-xs-4 col-sm-4 col-md-8 col-lg-5">
+            {{form.invoice|as_crispy_field}}
+            {{form.mode_of_payment|as_crispy_field}}
+            {{form.bank_account|as_crispy_field}}
+            {{form.cheque_no|as_crispy_field}}
+            {{form.document|as_crispy_field}}
+
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-8 col-lg-offset-1 col-lg-5">
+            {{form.transaction_id|as_crispy_field}}
+            {{form.email_id|as_crispy_field}}
+            {{form.payment_date|as_crispy_field}}
+            {{form.payment_amount|as_crispy_field}}
+        </div>
+    </div>
+   
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+    
+</form>
+
+<script type="text/javascript">
+
+
+$('#id_payment_date').datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1990:2050",
+    });
+
+$(document).ready(function(){
+    $('#id_mode_of_payment').change(function(){
+        var mode_of_payment = $('#id_mode_of_payment').val();
+        if (mode_of_payment=="cheque"){
+            $("#div_id_cheque_no").show();
+            $("#div_id_document").show();
+        }else if(mode_of_payment == "wire_transfer"){
+            $("#div_id_cheque_no").hide();
+            $("#div_id_document").hide();
+        }else if(mode_of_payment == "paypal"){
+            $("#div_id_cheque_no").hide();
+            $("#div_id_document").hide();
+        }
+    })
+
+})
+
+$(document).ready(function() {
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal("hide");
+
+                    alert(response.success_msg)
+                    //var data = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    console.log(response)
+                
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                },
+                
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="payment_list_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+            $('#paymentForm').ajaxForm(options);
+        });
+
+
+
+</script>

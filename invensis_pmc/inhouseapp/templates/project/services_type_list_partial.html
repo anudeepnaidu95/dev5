@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="col-md-11">
+        <h4>Service Types</h4>
+      </div>
+         <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'service_type_add' %}" data-list-div="service_type_list_div" data-list-div-url="{% url 'service_types_list' %}" data-title="Add Service Type" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="service_type_list_table" class="table table-striped table-bordered hover order-column" cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Service Name</th>
+                    <th>Slug</th>
+                    <th>Descrption</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for service in services %}
+                <tr class="even pointer">
+                    
+                    <td class=" ">{{ service.title }}</td>
+                    <td class=" ">{{ service.slug }} </td>
+                    <td class=" ">{{ service.description }}</td>
+                  
+                    <td class="last">
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'service_type_edit' service.slug %}" data-list-div="service_type_list_div" data-list-div-url="{% url 'service_types_list' %}" data-title="Edit Service Type" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                </tr>
+
+                {% empty %}
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#service_type_list_table').dataTable();
+})
+</script>

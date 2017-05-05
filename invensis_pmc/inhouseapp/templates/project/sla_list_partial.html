@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Sla</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'sla_add' %}" data-list-div="sla_list_div" data-list-div-url="{% url 'sla_list' %}" data-title="Add Sla" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="sla_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Sla Name</th>
+                    <th>Descrption</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in sla %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.title }}</td>
+                        <td class=" ">{{ type.description }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'sla_edit' type.slug %}" data-list-div="sla_list_div" data-list-div-url="{% url 'sla_list' %}" data-title="Edit Sla" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#sla_list_table').dataTable();
+})
+</script>   

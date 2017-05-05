@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Billing Types</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'billing_type_add' %}" data-list-div="billing_type_list_div" data-list-div-url="{% url 'billing_types_list' %}" data-title="Add Billing Type" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="billing_type_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Billing Type Name</th>
+                    <th>Descrption</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in billing_types %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.title }}</td>
+                        <td class=" ">{{ type.description }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'billing_type_edit' type.id %}" data-list-div="billing_type_list_div" data-list-div-url="{% url 'billing_types_list' %}" data-title="Edit Billing Type" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#billing_type_list_table').dataTable();
+})
+</script>   

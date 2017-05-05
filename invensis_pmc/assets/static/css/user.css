@@ -1,0 +1,104 @@
+#projecttasks_upload_form{
+
+	margin: 35px 50px 32px;
+	background-color: #ffffff
+}
+
+#projecttasks_upload_form div fieldset div{
+	    display: -webkit-inline-box;
+}
+
+
+#projecttasks_upload_form div fieldset div  input[type="file"]{
+	     margin: 25px;
+}
+
+
+.tab-content-main .module{
+
+	float: left;
+    max-width: 100%;
+}
+
+.tab-timer-content{
+
+	width:300px;
+	height:200px;
+	float:right;
+    margin-right: -80px;
+    background-color: #f6f7f8;
+}
+
+
+
+
+.tab-timer-content .control{
+	margin: 40px;
+}
+
+.tab-timer-content .control .btn{
+	font-size: 20px;
+	width: 70px;
+    min-height: 40px;
+}
+
+.tab-timer-content h1{
+	color: #005580;
+	font-family: inherit;
+    font-weight: bold;
+	padding-left: 55px;
+	padding-top: 10px
+    font-size: 30px;
+
+}
+
+.tab-qc {
+	float:right;
+    margin-right: -100px;
+}
+
+.tab-qc .btn{
+	font-size: 15px;
+    width: 94px;
+    min-height: 37px;
+    border-radius: 25px;
+}
+
+.table .field-button a:hover {
+     text-decoration: None; 
+}
+
+.control .btn.stop_button {
+    background: red !important;
+    padding: 5px 29px 5px 29px !important;
+}
+.control .btn {
+    float: left;
+    background: #389997;
+    border: none;
+    color: white;
+    margin: 5px;
+    border-radius: 10px;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    position: relative;
+    top: -2px;
+    right: -20px;
+    opacity: .80;
+    &:hover {
+        opacity: 1;
+    }
+}
+
+#timerValue {
+
+    font-family: sans-serif;
+    font-size: 35px;
+    margin-left: 60px;
+}
+
+@-moz-document url-prefix() {
+    h1 {
+        color: red;
+    }
+}

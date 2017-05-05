@@ -1,0 +1,66 @@
+{% load templates_extras %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Tasks List</h4>
+
+        {% comment %}
+            
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'task_add'  %}" data-list-div="task_list_div" data-list-div-url="{% url 'tasks_list' %}" data-title="Add Task" data-target=".bs-example-modal-lg">New</button>
+        {% endcomment %}
+    </div>
+    <div class="panel-body" style="overflow:scroll">
+        <table id="task_list_table" class="table table-responsive dt-responsive table-bordered  hover order-column " cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Task Name</th>
+                    <th>Project Name</th>
+                    <th>Folder Path</th>
+                    <th>No of Transactions</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Created By</th>
+                    
+
+                    {% if request.user|has_group:'lead' %}
+                        <th></th>
+                    {% endif %}
+          
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ task.title }}</td>
+                        <td class=" ">{{ task.service }}</td>
+                        <td class=" ">{{ task.folderpath }}</td>
+                        <td class=" ">{{ task.no_of_txs }}</td>
+                        <td class=" ">{{ task.start }}</td>
+                        <td class=" ">{{ task.end }}</td>
+                        <td class=" ">{{ task.created_by.first_name }}</td>
+                       
+                        
+                        {% if request.user|has_group:'lead' %}
+                            <td class="">
+                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-url="{% url 'task_edit'  task_id=task.id %}" data-list-div="task_list_div" data-list-div-url="{% url 'tasks_list' %}" data-title="Edit Task" data-target=".bs-example-modal-lg">Edit Task</button>
+
+
+                            <a href="{% url 'task_delete' id=task.id %}"<button type="delete_button" id="removeItem" class="btn btn-danger">Delete Task</button></a>
+                            </td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#task_list_table').dataTable({
+         responsive: true
+    });
+})
+</script>   

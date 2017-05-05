@@ -1,0 +1,49 @@
+{% load i18n %} 
+{% load staticfiles %} 
+{% block head %}
+    
+{% endblock %}
+
+ <div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">  
+            <h4>Project Service</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'project_service_add' %}" data-list-div="project_service_list_div" data-list-div-url="{% url 'project_service_list' %}" data-title="Add Project Service" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="project_service_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+
+    <thead>
+        <tr class="headings">
+            
+            <th>project</th>
+            <th>Industry</th>
+            <th>Operations Manager</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for type in project_service %}
+            <tr class="even pointer">
+                
+                <td class=" ">{{ type.project }}</td>
+                <td class=" ">{{ type.industry }}</td>
+                <td class=" ">{{ type.operations_manager }}</td>
+
+                <td class="">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'project_service_edit' type.id %}" data-list-div="project_service_list_div" data-list-div-url="{% url 'project_service_list' %}" data-title="Edit Project Service" data-target=".bs-example-modal-lg">Edit</button>
+                   
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#project_service_list_table').dataTable();
+})
+</script>

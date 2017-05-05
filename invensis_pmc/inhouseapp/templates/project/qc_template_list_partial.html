@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Qc Templates</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'qc_template_add' %}" data-list-div="qc_template_list_div" data-list-div-url="{% url 'qc_template_list' %}" data-title="Add Qc Template" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="qc_template_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Project Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for template in qc_template %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ template.service }}</td>
+                        
+                        <td class="">
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-url="{% url 'qc_template_edit' template.id %}" data-list-div="qc_template_list_div" data-list-div-url="{% url 'qc_template_list' %}" data-title="Edit Qc Template" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#qc_template_list_table').dataTable();
+})
+</script>   

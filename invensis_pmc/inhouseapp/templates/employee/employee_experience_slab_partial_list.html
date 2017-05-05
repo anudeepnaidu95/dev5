@@ -1,0 +1,34 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Employees List For Selected Experience</h4>
+    </div>
+    <div class="panel-body">
+        <table id="employee_exp_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Sl No</th>
+                    <th>Employee</th>
+                    <th>Experience</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employee_assignment %}
+                    <tr class="even pointer">
+                        <td class="">{{forloop.counter}}</td>
+                        <td class=" ">{{ emp.employee.name }}</td>
+                        <td class=" ">{{ emp.experience_slab }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#employee_exp_list_table').dataTable({
+            'searching': true,
+        });
+    })
+</script>   

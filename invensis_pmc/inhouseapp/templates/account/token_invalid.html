@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Invalid Token" %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{% trans 'This link is no longer valid.' %}</h1>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{% trans 'Your account is not activated.' %}</h2>
+        </div>
+    </div>
+{% endblock %}

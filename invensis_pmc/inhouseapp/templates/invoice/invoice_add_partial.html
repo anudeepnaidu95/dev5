@@ -1,0 +1,313 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+
+{% if is_edit_mode %}
+
+<style type="text/css">
+table, td, select,input{
+  width: 80px ;
+
+}
+</style>
+
+<form id="invoiceForm" action="{% url 'invoice_edit' invoice_id %}" method="post" id="edit_invoice"  class="form-horizontal form-label-left" enctype="multipart/form-data" >{% csrf_token %}
+
+{% else %}
+
+<form id="invoiceForm" action="{% url 'invoice_add' customer_id %}" method="post" id="new_invoice"  class="form-horizontal form-label-left" enctype="multipart/form-data" > {% csrf_token %}
+
+
+{% endif %}
+    
+    <div id="exception_error" style="display:none; color:red" ></div>
+
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+            {{ form.non_field_errors }}
+        <div class ="col-xs-6 col-sm-6 col-md-4 col-lg-4" >
+        
+            {{ form.start|as_crispy_field }}
+        </div>
+        <div class ="col-xs-6 col-sm-6 col-md-4 col-lg-offset-1 col-lg-4">
+            {{ form.end|as_crispy_field }}
+        </div>
+        {% if not is_edit_mode %}
+          <div class ="col-xs-6 col-sm-6 col-md-offset-1 col-md-1 col-lg-offset-1 col-lg-1" style="padding-top: 27px  ;margin-left: 60px ;">
+            <input type="button" value="GO" class='btn btn-success pull-right' id="generate" required="input" />
+          </div>
+        {% endif %}
+    </div> 
+
+    <div id="form_ajax" style="display:none; color:green">
+        <span>Form submit successfully.</span>
+    </div>
+    {% if not is_edit_mode %}
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id='serviceinvoices'>
+          <!--{% include "invoice/generate_invoice_partial.html" %} -->
+          <table id="svc_inv_list_table" class="table table-striped table-bordered hover order-column " cellspacing="0"  width="100%">
+              <thead>
+                  <tr class="headings">
+                      <th>Service</th>
+                      <th>Billing Type</th>
+                      <th>No of Txs</th>
+                      <th>No of Resources</th>
+                      <th>No of Working Days</th>
+                      <th>No of Hours</th>
+                      {% if request.user|has_group:"management" %}
+                        <th>Pricing</th>
+                        <th>Total Amount</th>
+                      {% endif %}
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+               
+
+              </tbody>
+          </table>
+      </div>
+    {% endif %}
+
+
+  {% if is_edit_mode %}
+    <style type="text/css">
+      #id_is_final{
+        margin-left: 130px  ;
+
+      }
+      .checkbox label {
+          padding-left: 20px ;
+          margin-bottom: 0 ;
+          font-weight: 700 ;
+          cursor: pointer;
+          font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+      }
+
+    </style>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <div class='pull-right'>
+        <label>Customer Currency : {{invoice.customer.currency}}</label>
+      </div>
+      <table class="table table-bordered  service_invoice" id="service_invoice_formsetTable">
+          <thead>
+              <tr>
+                  <th>Service</th>
+                  <th>Billing Type</th>
+                  <th>No of Txs</th>
+                  <th>No of Resources</th>
+                  <th>No of Working Days</th>
+                  <th>No of Hours</th>
+                  <th>Pricing</th>
+                  <th>Total Amount</th>
+
+              </tr>
+          </thead>
+          <tbody>
+              {% for service_invoice_form in service_invoice_formset.forms %} 
+                      {{ service_invoice_form.non_field_errors }}
+                      {{ service_invoice_form.errors }}
+                <tr class="service_invoices">
+                  {{service_invoice_form.id}}
+                  <td>{{service_invoice_form.service}}</td>
+                  <td class="billing_type">{{service_invoice_form.billing_type}}</td>
+                  <td class="no_of_txs">{{service_invoice_form.no_of_txs}}</td>
+                  <td class="no_of_resource">{{service_invoice_form.no_of_resources}}</td>
+                  <td>{{service_invoice_form.no_of_working_days}}</td>
+                  <td class="no_of_hrs">{{service_invoice_form.no_of_hours}}</td>
+                  <td class="pricing">{{service_invoice_form.pricing}}</td>
+                  <td class="invoice_amount">{{service_invoice_form.invoice_amount}}</td>
+                </tr>
+              {% endfor %}
+          </tbody>
+          {{ service_invoice_formset.management_form }}
+      </table>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        {{ form.is_final|as_crispy_field }}
+    </div>
+    
+
+
+    <script type="text/javascript">
+
+
+    $(document).ready(function(){
+
+ 
+    $('#service_invoice_formsetTable tbody').on('change','.no_of_txs,.no_of_resource,.no_of_hrs, .pricing', function(event) {
+        event.preventDefault();
+        var self=$(this).parent();
+        var no_of_txs = self.find('.no_of_txs').find('input').val();
+        var no_of_resource = self.find('.no_of_resource').find('input').val();
+        var no_of_hrs = self.find('.no_of_hrs').find('input').val();
+        var pricing = self.find('.pricing').find('input').val();
+        var invoice_amount = self.find('.invoice_amount').find('input').val();
+        var billing_type = self.find('.billing_type').find('select').val();
+        var inv_amt
+        var rowIndex = self.index();
+        //debugger;
+        if(billing_type == 'per_fte'){
+          inv_amt = no_of_resource * pricing;
+        }else if(billing_type == 'per_hour'){
+          inv_amt = no_of_hrs * pricing;
+        }else if(billing_type == 'per_tx'){
+          inv_amt = no_of_txs * pricing;
+        }        
+        $('tr.service_invoices').eq(rowIndex).find('.invoice_amount').find('input[type="number"]').val(inv_amt.toFixed(2));
+
+    });
+
+  });
+  </script>
+
+    {% endif %}
+    
+    <div>
+        <li style="color: red"> click on submit after generating invoice details </li>
+        <input type="submit" value="Submit" class='btn btn-success pull-right' id="submit" onsubmit="return ValidationEvent()" />
+    </div>
+
+</form>
+
+
+<script type="text/javascript">
+
+
+{% if not is_edit_mode %}
+function compareTime(time1, time2) {
+    return new Date(time1) > new Date(time2); // true if time1 is later
+}
+  $(document).ready(function(){
+
+      $('#generate').click(function(){
+          var start_date = $('#id_start').val();
+          var end_date = $('#id_end').val();
+          if(start_date==''){
+            alert("Enter start date");
+            return;
+          }
+          if( end_date==''){
+            alert("Enter end date");
+            return;
+          }
+         if(!compareTime(start_date,end_date)){
+          $.ajax({
+              url: "{% url 'generate_invoice' customer_id %}",
+              data : {
+                  'start_date' :start_date,
+                  'end_date':end_date,
+              },
+              type: 'POST',
+              dataType: "json",
+              success: function(data){
+                     // alert(data)
+                     if(data['error']){
+                        alert(data['error'])
+                      }
+                     $("#svc_inv_list_table tbody").empty();
+                      console.log(data)
+                      for( var i=0; i<data.length; i++){
+                          //alert(data[i]['service'])
+                        
+                         var html = '<tr><td class="service_id" style="display:none;" value='+data[i]["service_id"]+'>'+data[i]["service_id"]+'</td><td>'+data[i]['service']+'</td><td>'+data[i]['billing_type']+'</td><td>'+data[i]['no_of_txs']+'</td><td>'+data[i]['no_of_resources']+'</td><td>'+data[i]['no_of_working_days']+'</td><td>'+data[i]['no_of_hours']+'</td><td>'+data[i]['pricing']+'</td><td>'+data[i]['invoice_amount']+'</td><td><button type="button" class="btn btn-primary" data-toggle="modal" data-url= "/i/line-item-lists/'+data[i]['service_id']+'/" data-title="Invoice Line Items for Service Invoice--'+data[i]['service']+'" data-target="#line_items_modal">View Details</button></td></tr>'
+
+                          $('#svc_inv_list_table tbody').append($(html))  
+                      }     
+                  }
+              })
+         }else{
+          alert("Start date should be less then end date!");
+         }
+      })    
+  });
+{% endif %}
+// if ("#generate"== false) 
+//   $(document).ready(function() {
+//     $("#Submit"),on('click',  function() {
+//       alert("generate invoice Details to sub ")
+//     });
+    
+//   });
+
+
+$(document).ready(function() {
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+             var options = {
+                beforeSubmit: function(form, options) {
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal("hide");
+                    console.log(response)
+                    alert(response['success_msg'])
+                    //var success_message = JSON.parse(response.responseText);
+                    console.log(response)
+                    
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+                    var error_dict = JSON.parse(response.responseText);
+                    console.log(error_dict)
+                    if (errors.error_dict){
+                            $('#exception_error').empty().append('<p style="color:red;" class="exception_error">' +     errors.custom_error_dict['error'] + '</p>') ;
+
+                    }
+
+                    for (error in error_dict) {
+                         $('#div_id_' + error).append('<p style="color:red;" class="invoice_error">' + error_dict[error] + '</p>') ;
+                    }
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+            $('#invoiceForm').ajaxForm(options);
+
+
+            jQuery('.dateinput').datetimepicker({
+                             i18n:{
+                              de:{
+                               months:[
+                                'Januar','Februar','Marz','April',
+                                'Mai','Juni','Juli','August',
+                                'September','October','November','Disember',
+                               ],
+                               dayOfWeek:[
+                                "So.", "Mo", "Di", "Mi", 
+                                "Do", "Fr", "Sa.",
+                               ]
+                              }
+                             },
+                             timepicker:false,
+                             format:'Y-m-d'
+                })
+
+ });
+
+
+</script>

@@ -1,0 +1,77 @@
+{% load templates_extras %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {% if request.user|has_group:"operations manager" %}
+            <h4>Submit Data For Invoice</h4>
+        {% elif request.user|has_group:"management" %}
+            <h4>Customer Invoices</h4>
+        {% endif %}
+    </div>
+
+    <div class="panel-body">
+        <table id="customer_invoice_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Company</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Industry</th>
+                    <th>Country</th>
+                    <th></th>
+                </tr>
+            </thead>
+        <tbody>
+            {% for k, cust_tuple in cust_dict.items %}
+                <tr class="even pointer">
+                    <td class=" ">{{ cust_tuple.0.title }}</td>
+                    <td class=" ">{{ cust_tuple.0.contact_name }} </td>
+                    <td class=" ">{{ cust_tuple.0.email }}</td>
+                    <td class=" ">{{ cust_tuple.0.phone }}</td>            
+                    <td class=" ">{{ cust_tuple.0.industry }}</td>
+                    <td class=" ">{{ cust_tuple.0.country }}</td>
+                     {% if request.user|has_group:"management" %}
+                    <td class="last">
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'invoice_view_details' %}" data-list-div-url="{% url 'invoices_list' %}" data-target=".bs-example-modal-lg">view Details</button>
+                    </td>
+                    {% endif %}
+                    {% if request.user|has_group:"operations manager" %}
+                        <td class="last">
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'invoice_add' customer_id=cust_tuple.0.id %}" data-list-div="customer_invoice_list_div" data-list-div-url="{% url 'invoices_list' %}" data-title="Generate Invoice for Customer - {{cust_tuple.0.title}}" data-target=".bs-example-modal-lg">Submit Data for Invoice</button>
+                        </td>
+
+                </tr> 
+                    <tr class="headings">
+                        <th></th>
+                        <th>Invoice No</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    {% for invs in cust_tuple.1 %}
+                        <tr class="odd pointer">
+                            <td class=" "></td>
+                            <td class=" ">{{ invs.invoice_no }}</td>
+                            <td class=" ">{{ invs.date }}</td>
+                            <td class=" ">{{ invs.start|date:"M d, Y" }}</td>
+                            <td class=" ">{{ invs.end|date:"M d, Y" }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#customer_invoice_list_table').dataTable({
+            'searching': true,
+        });
+    })
+</script>

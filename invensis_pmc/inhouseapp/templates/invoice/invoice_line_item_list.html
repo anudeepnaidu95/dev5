@@ -1,0 +1,86 @@
+
+
+<div class="panel panel-default">
+    <div class="panel-body" style="overflow:scroll">
+        {% if service_name.billing_type == "per_fte" %}
+            <table id="invoice_line_item_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+                <thead>
+                    <tr class="headings">
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Number of Resources</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in service_tasks %}
+                        <tr class="even pointer">
+                            <td class=" ">{{ item.start }}</td>
+                            <td class=" ">{{ item.end }}</td>
+                            <td class=" ">{{ item.service.number_of_resources }}</td>
+                        </tr>                
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif service_name.billing_type == "per_hour" %}
+            <table id="invoice_line_item_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+                <thead>
+                    <tr class="headings">
+                        <th>Start Date</th>
+                        <th>End Date</th> 
+                        <th>Number of Hours</th>                   
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in service_tasks %}
+                        {% for value in service_invoice_dict.items %}
+ 
+                            <tr class="even pointer">
+                                <td class=" ">{{ item.start }}</td>
+                                <td class=" ">{{ item.end }}</td>
+                                <td class=" ">{{value.no_of_hours}}</td>
+                            </tr>  
+                        {% endfor%}                  
+                    {% endfor %}
+
+                </tbody>              
+            </table>
+   {% elif service_name.billing_type == "per_tx" %}
+            <table id="invoice_line_item_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+                <thead>
+                    <tr class="headings">
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Noumber of Transactions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in service_tasks %}
+                        <tr class="even pointer">
+                            <td class=" ">{{ item.start }}</td>
+                            <td class=" ">{{ item.end }}</td>
+                            <td class=" ">{{ item.no_of_txs }}</td>
+                        </tr>                
+
+                    {% endfor %}
+                </tbody>
+            </table>
+ 
+        {% endif %}       
+    </div>
+</div>
+
+
+<script src ="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"></script>
+<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"</script>
+
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js">
+<script type="text/javascript">
+    $(function(){
+        $('#invoice_line_item_list_table').dataTable({
+            "responsive": true,
+        });
+    })
+    
+</script>                      

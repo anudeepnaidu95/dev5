@@ -1,0 +1,382 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+{% if is_edit_mode %}
+
+<style type="text/css">
+#staff_task_formsetTable table, td, select,input{
+  width: 100px;
+
+}
+</style>
+<form id="lead_taskForm" action="{% url 'lead_task_edit' id %}" method="post" name="edit_lead_task"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    <div id="form_ajax_error" style="display:none; color:red"></div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <table class="table table-bordered  " id="task_">
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th>Task Start Date</th>
+                    <th>Task End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ task.title}}</td>
+                    <td>{{task.start}}</td>
+                    <td>{{task.end}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+            <table class="table table-bordered  " id="task_">
+             <caption>Lead Task Details</caption>
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Number of Transactions</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{lead_task.filename}}</td>
+                        <td>{{lead_task.no_of_txs}}</td>
+                       
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+            <table class="table table-bordered  " id="lead_task_resourse_formsetTable">
+                <caption>Resource Planning</caption>
+                <thead>
+                    <tr>
+                        <th>Experience Slab</th>
+                        <th>Number of Resources</th>
+                        <th>Target</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead_task_resource in lead_task_resources %} 
+                        <tr>
+                            <td><a data-toggle="modal" href="#emp_expModal" data-url="{% url 'employee_exp_range_list' exp_slab_id=lead_task_resource.experience_slab_id %}">{{lead_task_resource.experience_slab}}</a></td>
+                            <td>{{lead_task_resource.number_of_resources}}</td>
+                            <td>{{lead_task_resource.output_count_per_resource}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+
+
+    
+{% else %}
+
+<form id="lead_taskForm" action="{% url 'lead_task_add' %}" method="post" name="new_lead_task"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+            {{ form.lead|as_crispy_field }}
+
+            {{ form.filename|as_crispy_field }}
+
+
+            {{ form.no_of_txs|as_crispy_field}}
+        </div>
+
+
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+            <table class="table table-bordered  " id="lead_task_resourse_formsetTable">
+                <caption>Resource Planning</caption>
+                <thead>
+                    <tr>
+                        <th>Experience Slab</th>
+                        <th>Number of Resources</th>
+                        <th>Target</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead_task_resource_form in lead_task_resource_formset_forms.forms %} 
+                        {{lead_task_resource_form.id}}
+                        {{ lead_task_resource_form.non_field_errors }}
+                        {{ lead_task_resource_form.errors }}
+                        <tr>
+                            <td>{{lead_task_resource_form.experience_slab}}</td>
+                            <td>{{lead_task_resource_form.number_of_resources}}</td>
+                            <td>{{lead_task_resource_form.output_count_per_resource}}</td>
+
+                            {% if lead_task_resource_formset_forms.can_delete %}
+                            <td>{{ lead_task_resource_form.DELETE }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {{ lead_task_resource_formset_forms.management_form }}
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+        <div id="form_ajax_error" style="display:none; color:red">
+            <span>Can not submit data due to errors.</span>
+        </div>
+        <div id="form_ajax" style="display:none; color:green">
+            <span>Form submit successfully.</span>
+        </div>
+        <div id="exception_error" style="display:none; color:red"></div>
+        
+        {% if request.user|has_group:"lead" %}
+            <table class="table table-bordered  " id="staff_task_formsetTable">
+                <thead>
+                    <tr>
+                        <th>Staff</th>
+                        <th>File Path</th>
+                        <th>No of Transactions</th>
+                        <th>Priority</th>
+                        <th>status</th>
+                        <th>Is Qc Required</th>
+                        <th>Qc Lead</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff_task_form in staff_task_formset_forms.forms %} 
+                        {{staff_task_form.id}}
+                        {{ staff_task_form.non_field_errors }}
+                        {{ staff_task_form.errors }}
+
+                        <tr >
+                            <td class='staff_tasks'>{{staff_task_form.staff }} <span class="feedback"></span></td>
+                            <td>{{staff_task_form.filename }}</td>
+                            <td>{{staff_task_form.no_of_txs }}</td>
+                            <td>{{staff_task_form.priority}}</td>
+                            <td>{{staff_task_form.status}}</td>
+                            <td>{{staff_task_form.is_qc_required}}</td>
+                            <td>{{staff_task_form.qc_lead }}</td>
+                            <td>
+                                {% if staff_task_formset_forms.can_delete %}
+                                    {{ staff_task_form.DELETE }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {{ staff_task_formset_forms.management_form }}
+            </table>
+        {% endif %}
+    </div>
+
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+</form>
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+$('td.staff_tasks').find('select').on('change', function(event) {
+    event.preventDefault();
+    var self=$(this);
+    var staff=self.val();
+    //alert(staf)
+    $.ajax({
+        url: '{% url "staff_task_exp" %}',
+        type: 'POST',
+        dataType: 'json',
+        data: {staff:staff},
+    })
+    .done(function(data) {
+        console.log(data)
+        self.parent().find('.feedback').text(data.emp_exp);
+        if (data.emp_not_exist){
+            alert(data.emp_not_exist)
+        }
+    })
+    .fail(function() {
+        console.log("error");
+    })
+    .always(function() {
+        console.log("complete");
+    });
+    
+});
+
+$(document).ready(function(){
+    $('select[name^="staff_task_form-"][name$="-staff"]', $('#service_form')).change(function(){
+        var customer = $('[id^="id_staff_task_form-"][id$="-staff"]').val();
+        //alert(customer)
+
+        alert(customer);
+
+        var Something = $(this).children("td:nth-child(n)").text();
+
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'customer' :customer,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                   // alert(data)
+                    console.log(data)
+                    $('#id_customer_currency_type').val(data.customer_curency)
+            }
+ 
+        })
+    })
+
+});
+
+
+$(document).ready(function() {
+   function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+
+            }
+    // prepare Options Object for plugin
+    var options = {
+        beforeSubmit: function(form, options) {
+            // return false to cancel submit
+            block_form();
+        },
+        success: function(response) {
+            unblock_form();
+            $("#mymodal").modal("hide");
+            alert(response.success_msg)
+            //var success_message = JSON.parse(response.responseText);
+
+            console.log(response.success_msg)
+            
+            setTimeout(function() {
+                $("#form_ajax").hide();
+            }, 5000);
+            /*
+            $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+            setTimeout(function() {
+                $("#success_messages").hide();
+            }, 5000);
+
+            */
+
+        },
+        error: function(response) {
+            unblock_form();
+            $("#form_ajax_error").show();
+            // render errors in form fields
+            var errors = JSON.parse(response.responseText);
+             $("#errorid").append(errors.title);
+             console.log(errors)
+
+            console.log(errors.exception_error_dict)
+            if (errors.exception_error_dict){
+            $('#form_ajax_error').empty().append('<p style="color:red;" class="exception_error">' + errors.exception_error_dict['transaction_not_matching'] + '</p>') ;
+            }
+
+            else if (errors.form_errors){
+            for (error in errors.form_errors) {
+                var id = '#id_' + error;
+                $(id).parent('div').append(errors.form_errors[error]).attr("style", "color:red");
+            }
+            }
+
+            else if (errors.staff_task_formset_error_dict){
+                for (error in errors.staff_task_formset_error_dict) {
+                    console.log(errors.staff_task_formset_error_dict)
+                    if (error=='staff'){
+                        var id = '[id^=id_staff_task_form-][id$=-staff]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-staff]' != 'value'){
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+                    else if(error=='filename'){
+                        var id = '[id^=id_staff_task_form-][id$=-filename]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-filename]' != 'value'){ 
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+
+                    else if(error=='no_of_txs'){
+                        var id = '[id^=id_staff_task_form-][id$=-no_of_txs]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-no_of_txs]' != 'value'){ 
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+                    else if(error=='priority'){
+                        var id = '[id^=id_staff_task_form-][id$=-priority]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-priority]' != 'value'){ 
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+
+                    else if(error=='qc_lead'){
+                        var id = '[id^=id_staff_task_form-][id$=-qc_lead]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-qc_lead]' != 'value'){ 
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+
+                    else if(error=='is_qc_required'){
+                        var id = '[id^=id_staff_task_form-][id$=-is_qc_required]';
+                        //alert(id)
+                        if ('#[id^=id_staff_task_form-][id$=-is_qc_required]' != 'value'){ 
+                            $(id).parent('td').append(errors.staff_task_formset_error_dict[error]).attr("style", "color:red");
+                        }
+                    }
+
+                }
+            }
+            
+
+            setTimeout(function() {
+                $("#form_ajax_error").hide();
+
+
+            }, 5000);
+        }
+    };
+
+    $('#lead_taskForm').ajaxForm(options); 
+
+
+    $('#staff_task_formsetTable tbody > tr').formset({
+            prefix: '{{ staff_task_formset_forms.prefix }}',
+            addText : 'Add',
+            deleteText: 'Delete',
+    });
+    
+
+});
+</script>

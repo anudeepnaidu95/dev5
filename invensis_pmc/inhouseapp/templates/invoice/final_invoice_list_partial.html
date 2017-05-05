@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Final Invoice</h4>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body" style="overflow:scroll">
+            <table id="final_invoices_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+                <thead>
+                    <tr class="headings">
+                        <th>Company Name</th>
+                        <th>Invoice Number</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in final_invoices %}
+                        <tr class="even pointer">
+                            <td class=" ">{{ item.customer.title }}</td>
+                            <td class=" ">{{ item.invoice_no }}</td>
+                            <td class=" ">{{ item.start|date:"M d, Y" }}</td>
+                            <td class=" ">{{ item.end|date:"M d, Y" }}</td>
+                            <td class=" ">{{ item.date }}</td>
+                            <td>
+                                <a href= "{% url 'invoice_generator' invoice_id=item.id %}"<button type="button" data-toggle="modal"  class="btn btn-success" name="invoice_pdf">ViewPdf</button></a>
+                            </td>
+                        </tr>                
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#final_invoices_list_table').dataTable();
+    })
+</script>

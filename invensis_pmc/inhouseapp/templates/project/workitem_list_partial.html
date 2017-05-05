@@ -1,0 +1,56 @@
+{% load i18n %} 
+{% load staticfiles %} 
+{% block head %}
+    <style>
+        div.dataTables_processing { z-index: 1; }
+    </style>
+{% endblock %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">  
+            <h4>WorkItem</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'workitem_add' %}" data-list-div="workitem_list_div" data-list-div-url="{% url 'workitem_list' %}" data-title="Add WorkItem" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="workitem_list_table" class="table table-striped table-bordered hover order-column"  cellspacing="0" width="100%">
+
+        <thead>
+            <tr class="headings">
+               <th>Project Task</th>
+
+                <th>Folder Name</th>
+                <th>File Name</th>
+                <th>Number Of Items</th>
+                <th>Number Of WorkItems Completed</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for type in workitem %}
+                <tr class="even pointer">
+                    <td class-"">{{type.project_task}}</td>
+                    <td class=" ">{{ type.slug }}</td>
+                    <td class=" ">{{ type.folder_name }} </td>
+                    <td class=" ">{{ type.file_name }}</td>
+                    <td class=" ">{{ type.number_of_items }}
+                    
+                    <td class="">
+                        <button type="button" data-toggle="modal" data-url="{% url 'workitem_edit' type.id %}" data-list-div="workitem_list_div" data-list-div-url="{% url 'workitem_list' %}" data-title="Edit Work Item" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#workitem_list_table').dataTable();
+})
+</script>   

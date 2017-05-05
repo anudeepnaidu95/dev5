@@ -1,0 +1,65 @@
+<table id="svc_inv_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0"  width="100%">
+    <thead>
+        <tr class="headings">
+            <th>Service</th>
+            <th>Billing Type</th>
+            <th>Pricing</th>
+            <th>Invoice Amount</th>
+            <th>no_of_txs</th>
+            <th>no_of_resources</th>
+            <th>no_of_working_days</th>
+            <th>no_of_hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in service_invoice_dict.items %}
+            <tr class="even pointer">
+                <td class-"">{{key.service}}</td>
+                <td class=" ">{{value.billing_type }}</td>
+                <td class-"">{{value.pricing}}</td>
+                <td class=" ">{{value.invoice_amount}}</td>
+                <td class-"">{{value.no_of_txs}}</td> 
+                <td class=" ">{{value.no_of_resources}}</td>
+                <td class-"">{{value.no_of_working_days}}</td>
+                <td class=" ">{{value.no_of_hours}}</td>
+                
+                <td class="">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'service_line_item_list' service_id=svc_inv.id %}" data-title="Invoice Line Items for Service Invoice--{{svc_inv.service}}" data-target=".bs-line_items-modal-lg">View Details</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{# 
+<table id="svc_inv_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0"  width="100%">
+    <thead>
+        <tr class="headings">
+            <th>Service</th>
+            <th>Billing Type</th>
+            <th>Pricing</th>
+            <th>Invoice Amount</th>
+            <th>no_of_txs</th>
+            <th>no_of_resources</th>
+            <th>no_of_working_days</th>
+            <th>no_of_hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for svc_inv in service_invoices %}
+            <tr class="even pointer">
+                <td class-"">{{svc_inv.service}}</td>
+                <td class=" ">{{svc_inv.billing_type }}</td>
+                <td class-"">{{svc_inv.pricing}}</td>
+                <td class=" ">{{svc_inv.invoice_amount}}</td>
+                <td class-"">{{svc_inv.no_of_txs}}</td>
+                <td class=" ">{{svc_inv.no_of_resources}}</td>
+                <td class-"">{{svc_inv.no_of_working_days}}</td>
+                <td class=" ">{{svc_inv.no_of_hours}}</td>
+                
+                <td class="">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'service_line_item_list' service_inv_id=svc_inv.id %}" data-title="Invoice Line Items for Service Invoice--{{svc_inv.service}}" data-target=".bs-line_items-modal-lg">View Details</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table> 

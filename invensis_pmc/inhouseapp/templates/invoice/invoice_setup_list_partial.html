@@ -1,0 +1,48 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Invoice Setups</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'invoice_setup_add' %}" data-list-div="invoice_setup_list_div" data-list-div-url="{% url 'invoice_setup_list' %}" data-title="Add Invoice Setup" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="invoice_setup_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Company Name</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in setup_lists %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.company_name }}</td>
+                        <td class=" ">{{ type.city }}</td>
+                        <td class=" ">{{ type.state }}</td>
+                        <td class=" ">{{ type.country }}</td>
+                        <td class=" ">{{ type.phone }}</td>
+                        <td class=" ">{{ type.email }}</td>
+                        <td class=" ">{{ type.addressline1 }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'invoice_setup_edit' type.id %}" data-list-div="invoice_setup_list_div" data-list-div-url="{% url 'invoice_setup_list' %}" data-title="Edit Invoice Setup" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#invoice_setup_list_table').dataTable();
+})
+</script>   

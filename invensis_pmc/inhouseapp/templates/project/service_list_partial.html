@@ -1,0 +1,114 @@
+{% load templates_extras %}
+
+<div class="panel panel-default" >
+    {% if request.user|has_group:"sales manager" %}
+        <div class="panel-heading">
+            <div class="col-md-11 col-lg-11">
+                <h4>Project Details List</h4>
+            </div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'service_add' %}" data-list-div="service_list_div" data-list-div-url="{% url 'service_list' %}" data-title="Add Service" data-target=".bs-example-modal-lg">New</button>
+        </div>
+    {% else %}
+        <div class="panel-heading">
+            <h4 >Project Details List</h4>
+        </div>
+    {% endif %}
+    
+    <div class="panel-body" style="overflow:scroll">
+        <table id="service_list_table" class="table table-responsive table-bordered dt-responsive hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Project Name</th>
+                    <th> Customer </th>
+                    <th> Number of Resources </th>
+                    {% if request.user|has_group:"sales manager" %}
+                        <th>Operations Manager</th>
+                        <th>Documents Attached</th>
+                    {% endif %}
+                    {% if request.user|has_group:"operations manager" or request.user|has_group:"lead"%}
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    {% endif %}
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k,svc_tuple in svc_dict.items %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ svc_tuple.0.title }}</td>
+                        <td class=" ">{{ svc_tuple.0.customer }}</td>
+                        <td class=" ">{{ svc_tuple.0.number_of_resources }}</td>
+                        {% if request.user|has_group:"sales manager" %}
+                            <td class=" ">{{ svc_tuple.0.operations_manager }}</td>
+                            <td>
+                                {% for svc_document in svc_tuple.1 %}
+                                    <li style="list-style-type:None">{{svc_document.document_type}}</li>
+                                {% endfor %}
+                            </td>
+                        {% endif %}
+                        {% if request.user|has_group:"operations manager" or request.user|has_group:"lead" %}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        {% endif %}
+                        {% if request.user|has_group:"operations manager" or request.user|has_group:"lead" %}
+                        <td class="">
+                           <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'service_edit' svc_tuple.0.id %}" data-list-div="service_list_div" data-list-div-url="{% url 'service_list' %}" data-title="Edit Project Details" data-target=".bs-example-modal-lg" >Edit Project</button>
+
+                        </td>
+                        {% endif %}
+                        {% if request.user|has_group:"sales manager"  %}
+                        <td class="">
+                           <button type="button" class="btn btn-secondary" data-toggle="modal" data-url="{% url 'service_edit' svc_tuple.0.id %}" data-list-div="service_list_div" data-list-div-url="{% url 'service_list' %}" data-title="Edit Project Details" data-target=".bs-example-modal-lg" >Edit Project</button>
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'service_view' svc_tuple.0.id%}" data-list-div="service_list_div" data-list-div-url="{% url 'service_list' %}" data-title="View Service" data-target=".bs-example-modal-lg">View</button>
+                        </td>
+                        {% endif %}
+                    </tr> 
+                    
+                    {% if request.user|has_group:"operations manager" or request.user|has_group:"lead" %}
+                        <tr class="headings">
+                            <th></th>
+                            <th>Task Name</th>
+                            <th>Folder Path</th>
+                            <th>No of Transactions</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>
+                                <button type="button" data-toggle="modal"  class="btn btn-success" data-url="{% url 'task_add' service_id=svc_tuple.0.id %}" data-list-div="task_list_div" data-list-div-url="{% url 'tasks_list' %}" data-title="Add Task Details" data-target=".bs-example-modal-lg">Add Task</button>
+                            </th>
+                        </tr>
+                        {% for task in svc_tuple.1 %}
+                            <tr class="even pointer">
+                                <td class=" "></td>
+                                <td class=" ">{{ task.title }}</td>
+                                <td class=" ">{{ task.folderpath }}</td>
+                                <td class=" ">{{ task.no_of_txs }}</td>
+                                <td class=" ">{{ task.start }}</td>
+                                <td class=" ">{{ task.end }}</td>
+                                <td>
+                                    <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'task_edit' task_id=task.id %}" data-list-div="task_list_div" data-list-div-url="{% url 'tasks_list' %}" data-title="Edit Task Details" data-target=".bs-example-modal-lg">Edit Task</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+ $(document).ready(function(){
+     // body...
+     $('#service_list_table').dataTable({
+        "responsive": true,
+        "bSort" : false,
+        "iDisplayLength": 50
+     });
+ })
+
+</script>   

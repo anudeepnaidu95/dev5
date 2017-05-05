@@ -1,0 +1,140 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<style>
+    #form_ajax_error, .errorlist {
+        color: red;
+    }
+</style>
+
+<div class="box">
+    <div class="box-body">
+        <div id="errorid" style="display:; color:red"></div>
+{% if is_edit_mode %}
+    
+<form id="myForm" action="{% url 'employee_edit' id %}" method="post" name="edit_employee" class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+
+    
+{% else %}
+
+<form id="myForm" action="{% url 'employee_add' %}" method="post" name="new_employee"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+    
+{% endif %}
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="form_ajax" style="display:none; color:green">
+            <span>Form submit successfully.</span>
+        </div>
+
+        <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
+            
+            {{ user_form.username|as_crispy_field }}
+            {{ user_form.first_name|as_crispy_field }}
+            {{ user_form.last_name|as_crispy_field}}
+            {{ user_form.email|as_crispy_field }}
+            {{ user_form.password|as_crispy_field}}
+            {{ user_form.is_staff|as_crispy_field}}
+
+
+        </div>
+        <div class="col-xs-4 col-sm-2 col-md-3 col-lg-4  col-lg-offset-1">
+            
+            {{ form.parent|as_crispy_field }}
+            {{ form.department|as_crispy_field }}
+            {{ role_form.role|as_crispy_field }}
+            {{ emp_assi_exp_form.experience_slab|as_crispy_field }}
+            {{ emp_assi_exp_form.comments|as_crispy_field}}
+        </div>
+    </div>
+       
+    <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+</form>
+
+
+
+<script type="text/javascript">
+    
+
+$(document).ready(function() {
+            function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal("hide");
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+                error:  function(response) {
+                    unblock_form();
+                    $("#form_ajax_error").show();
+                    // render errors in form fields
+
+                    var errors = JSON.parse(response.responseText);
+                    console.log(errors)
+
+                    for (error in errors.form_error_dict) {
+                        var id = '#id_' + error;
+                        $(id).parent('div').append(errors.form_error_dict[error]).attr("style", "color:red");
+
+                    }
+                    for (error in errors.user_form_error_dict) {
+                        var id = '#id_' + error;
+                        $(id).parent('div').append(errors.user_form_error_dict[error]).attr("style", "color:red");
+                    }
+                    for (error in errors.emp_exp_form_error_dict) {
+                        var id = '#id_' + error;
+                        $(id).parent('div').append(errors.emp_exp_form_error_dict[error]).attr("style", "color:red");
+                    }
+                    for (error in errors.emp_role_form_error_dict) {
+                        var id = '#id_' + error;
+                        $(id).parent('div').append(errors.emp_role_form_error_dict[error]).attr("style", "color:red");
+                    }
+
+
+                    setTimeout(function() {
+                        $("#form_ajax_error").hide();
+                    }, 5000);
+                },
+                clearForm:true
+            };
+
+            $('#myForm').ajaxForm(options);
+        });
+
+
+</script>
+

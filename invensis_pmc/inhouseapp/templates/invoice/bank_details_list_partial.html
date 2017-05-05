@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Bank Details</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'bank_details_add' %}" data-list-div="bank_details_list_div" data-list-div-url="{% url 'bank_details_list' %}" data-title="Add Bank Details" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="bank_details_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Bank Name</th>
+                    <th>Account Number</th>
+                    <th>Bank Branch</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Pincode</th>
+                    <th>Address</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in bank_details_lists %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.bank_name }}</td>
+                        <td class=" ">{{ type.account_number }}</td>
+                        <td class=" ">{{ type.bank_branch }}</td>
+                        <td class=" ">{{ type.city }}</td>
+                        <td class=" ">{{ type.state }}</td>
+                        <td class=" ">{{ type.pincode }}</td>
+                        <td class=" ">{{ type.addressline1 }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'bank_details_edit' type.id %}" data-list-div="bank_details_list_div" data-list-div-url="{% url 'bank_details_list' %}" data-title="Edit Bank Details" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#bank_details_list_table').dataTable();
+    })
+</script>  

@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>ServiceDocument</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'service_document_add' %}" data-list-div="service_document_list_div" data-list-div-url="{% url 'service_document_list' %}" data-title="Add ServiceDocument" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="service_document_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Service</th>
+                    <th>Document</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in service_document %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.service }}</td>
+                        <td class=" ">{{ type.document }}</td>
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal" data-url="{% url 'service_document_edit' type.id %}" data-list-div="service_document_list_div" data-list-div-url="{% url 'service_document_list' %}" data-title="Edit ServiceDocument" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#service_document_list_table').dataTable();
+
+
+    
+})
+ 
+</script>

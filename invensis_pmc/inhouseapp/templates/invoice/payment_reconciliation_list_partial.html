@@ -1,0 +1,52 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class='col-md-11'>
+            <h4>Payment Reconciliation Details</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'paymant_reconciliation_add' %}" data-list-div="paymant_reconciliation_list_div" data-list-div-url="{% url 'paymant_reconciliation_list' %}" data-title="Add Payment Details" data-target=".bs-example-modal-lg">New</button>
+
+    </div>
+
+    <div class="panel-body">
+        <table id="payments_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Invoice Number</th>
+                    <th>Invoice Amount</th>
+                    <th>Payment Amount</th>
+                    <th>Payment Date</th>
+                    <th>Cheque Number</th>
+                    <th>Transaction Id</th>
+                    <th>Email Id</th>
+                    <th>Mode of Payment</th>
+                    <th>Bank Account</th>
+                    <th></th>
+                </tr>
+            </thead>
+        <tbody>
+            {% for payment in paymant_reconciliation_lists %}
+                <tr class="even pointer">
+                    <td class=" ">{{ payment.invoice }}</td>
+                    <td class=" ">{{ payment.invoice.total_amount }}</td>
+                    <td class=" ">{{ payment.payment_amount }}</td>
+                    <td class=" ">{{ payment.payment_date }}</td>
+                    <td class=" ">{{ payment.cheque_no }} </td>
+                    <td class=" ">{{ payment.transaction_id }}</td>
+                    <td class=" ">{{ payment.email_id }}</td>            
+                    <td class=" ">{{ payment.mode_of_payment }}</td>
+                    <td class=" ">{{ payment.bank_account }}</td>
+                    <td class="">
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'paymant_reconciliation_edit' payment.id %}" data-list-div="paymant_reconciliation_list_div" data-list-div-url="{% url 'paymant_reconciliation_list' %}" data-title="Edit Payment Details" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                </tr>                
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#payments_list_table').dataTable();
+    })
+</script>

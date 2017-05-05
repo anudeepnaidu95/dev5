@@ -1,0 +1,628 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+
+<div class="box">
+    <div class="box-body">
+        <div id="errorid" style="display:; color:red"></div>
+
+        {% if is_edit_mode %}
+            
+            <form id="service_form" action="{% url 'service_edit' id %}" method="post" name="edit_service"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+                
+        {% else %}
+
+            <form id="service_form" action="{% url 'service_add' %}" method="post" name="new_service" data-parsley-validate class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+                
+        {% endif %}
+
+            {% if request.user|has_group:"operations manager" or request.user|has_group:"lead"%}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        
+                        <p><label>Project Name:</label><span>{{service.title}}</span></p>
+                        <p><label>Customer:</label><span>{{service.customer}}</span></p>
+                        <p><label>Shift Timings:</label><span>{{service.shift_timings}}</span></p>
+                        <p><label>Project Type:</label><span>{{service.project_type}}</span></p>
+                        <p><label>Service Type:</label><span>{{service.service_type}}</span></p>
+                        <p><label>Number of resources:</label><span>{{service.number_of_resources}}</span></p>
+                        <p><label>Operational Days:</label><span>{{service.workweek_days}}</span></p>
+                        <p><label>Operation Hours:</label><span>{{service.daily_work_hours}}</span></p>
+                        <p><label>Keynotes:</label><span>{{service.key_notes}}</span></p>
+
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <table class="table table-bordered " id="resource_">
+                            <thead>
+                                <tr>
+                                    <th>Experience Slab</th>
+                                    <th>Number of Resources</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for resource_plan in resource_plans %}
+                                    <tr>
+                                        <td>{{resource_plan.experience_slab}}</td>
+                                        <td>{{resource_plan.number_of_resources}}</td>
+                                        <td>{{resource_plan.output_count_per_resource}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                        <table class="table table-bordered  " id="assign_service_lead_formsetTable">
+                            <thead>
+                                <tr>
+                                 <th>Project Lead</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assign_service_lead_form in assign_service_lead_formset.forms %} 
+                                    {{assign_service_lead_form.id}}
+                                    {{ assign_service_lead_form.non_field_errors }}
+                                    {{ assign_service_lead_form.errors }}
+                                    <tr>
+                                        <td>{{assign_service_lead_form.lead }}</td>
+
+                                        {% if assign_service_lead_formset.can_delete %}
+                                            <td>{{ assign_service_lead_form.DELETE }}</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {{ assign_service_lead_formset.management_form }}
+                        </table>
+
+                </div>
+
+
+            {% endif %}
+
+
+            {% if request.user|has_group:"sales manager" %}
+                <div id="form_ajax_error" style="display:none; color:red">
+                    <span>Can not submit data due to errors.</span>
+                </div>
+                <div id="form_ajax" style="display:none; color:green">
+                    <span>Form submit successfully.</span>
+                </div>
+                        
+                {{ form.non_field_errors }}
+
+                <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
+                  
+                    {{ form.title|as_crispy_field }}
+                    {{ form.customer|as_crispy_field }}
+                    {{ form.shift_timings|as_crispy_field}}
+                    {{ form.project_type|as_crispy_field}}
+                    {{ form.service_type|as_crispy_field}}
+                    {{ form.number_of_resources|as_crispy_field}}
+
+                    <div class='col-lg-5'>
+                        {{ form.workweek_start|as_crispy_field}}
+                    </div>
+                    <div class='col-lg-5 col-lg-offset-1'>
+                        {{ form.workweek_end|as_crispy_field}}
+                    </div>
+                    {{ form.workweek_days|as_crispy_field}}
+
+                    <div class='col-lg-5'>
+                        {{ form.workhours_start|as_crispy_field}}
+                    </div>
+                    <div class='col-lg-5 col-lg-offset-1'>
+                        {{ form.workhours_end|as_crispy_field}}
+                    </div>
+                    {{ form.daily_work_hours|as_crispy_field}}
+                 
+                    {{ form.key_notes|as_crispy_field}}
+                </div>
+                            
+                <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+
+                    {% if request.user|has_group:"sales manager" %}
+                        {{ form.billing_type|as_crispy_field}}
+                        {{ form.billing_interval_in_days|as_crispy_field}}
+                        {{ form.amount_per_billing_type|as_crispy_field}}
+                    {% endif %}
+                   
+
+                    {{ form.no_of_man_hours_per_month|as_crispy_field}}
+
+                    {{ form.tx_volume_duration_type|as_crispy_field}}
+                    {{ form.projected_tx_volume_per_day|as_crispy_field}}
+                    {{ form.projected_tx_volume_per_week|as_crispy_field}}
+                    {{ form.projected_tx_volume_per_month|as_crispy_field}}
+
+                    {% if request.user|has_group:"sales manager" %}
+                        {{ form.customer_currency_type|as_crispy_field}}
+                        {{ form.conversion_rate|as_crispy_field}}
+                        
+                        {{ form.projected_prj_value_per_month|as_crispy_field}}
+                        {{ form.projected_prj_value_per_annum|as_crispy_field}}
+                        {{ form.fte_cost_per_month|as_crispy_field}}
+                        {{ form.operations_manager|as_crispy_field}}
+                    {% endif %}
+                </div>        
+
+
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                    {{ servicesla_formset.management_form }}
+                    <table class="table table-bordered  " id="servicesla_formsetTable">
+                        <thead>
+                            <tr>
+
+                             <th>SLA Parameters </th>
+                             <th>SLA Metrics</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for serviceslaFieldForm in servicesla_formset.forms %} {{serviceslaFieldForm.id}}
+                                    {{ serviceslaFieldForm.non_field_errors }}
+                                    {{ serviceslaFieldForm.errors }}
+                            <tr>
+                                <td>{{serviceslaFieldForm.sla_type}}</td>
+                                <td>{{serviceslaFieldForm.sla_value}}</td>
+                                
+                                <td>
+                                    {% if servicesla_formset.can_delete %}
+                                        {{ serviceslaFieldForm.DELETE }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    
+                    </table>
+
+                    
+                    <table class="table table-bordered " id="service_document_formsetTable">
+                        <thead>
+                            <tr>
+                                <th>Document Type </th>
+                                <th>Document</th>
+                                <th>Share With Others</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for service_document_form in service_document_formset.forms %}
+                        {{service_document_form.id}}
+                            <tr>
+                                <td class='service_docs'>{{service_document_form.document_type}}
+                                    <div class='dvdocument' style='margin-top: 10px'></div>
+                                </td>
+                                <td href="#">{{service_document_form.document}}</td>
+                                <td>{{service_document_form.share_with_others}}</td>
+
+                                <!--<td style="display:none;">{{service_document_form.other_document_type }}</td>-->
+                                <td>
+                                {% if service_document_formset.can_delete %}
+                                    {{ service_document_form.DELETE }}
+                                {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    {{ service_document_formset.management_form }}
+                    </table>
+
+                    <div class="col-md-11">
+                        <h4>Resource Planning</h4>
+                    </div>
+                    <table class="table table-bordered  " id="service_resource_formsetTable">
+                        <thead>
+                            <tr>
+                             <th>Experience Slab</th>
+                             <th>Number of Resources</th>
+                             <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for serviceresourceFieldForm in service_resource_formset.forms %} {{serviceresourceFieldForm.id}}
+                            <tr>
+                                <td>{{serviceresourceFieldForm.experience_slab}}</td>
+                                <td>{{serviceresourceFieldForm.number_of_resources}}</td>
+                                <td>{{serviceresourceFieldForm.output_count_per_resource}}</td>
+                                <td>
+                                    {% if service_resource_formset.can_delete %}
+                                        {{ serviceresourceFieldForm.DELETE }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    {{ service_resource_formset.management_form }}
+
+                    </table>
+            
+                </div>
+             {% endif %}
+
+            <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+        </form>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('select[name^="workweek_"]', $('#service_form')).change(function(){
+        var workweek_start = $('#id_workweek_start').val();
+        var workweek_end = $('#id_workweek_end').val();
+        //alert(workweek_start)
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'workweek_start' :workweek_start,
+                'workweek_end':workweek_end,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                   // alert(data)
+                    console.log(data)
+                    $('#id_workweek_days').val(data.operations_days)
+            }
+ 
+        })
+    })
+
+});
+
+
+
+$(document).ready(function(){
+    $('.timeinput').change(function(){
+        var workhours_start = $('#id_workhours_start').val();
+        var workhours_end = $('#id_workhours_end').val();
+        //alert(workhours_start);
+        //alert(workhours_end);
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'workhours_start':workhours_start,
+                'workhours_end' : workhours_end,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                    console.log(data)
+                    $('#id_daily_work_hours').val(data.operational_hours)
+            }
+        })
+    })
+});
+
+
+$(document).ready(function(){
+    $(' select[name =customer]').change(function(){
+        var customer = $('#id_customer').val();
+        //alert(workhours_start);
+        //alert(workhours_end);
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'customer':customer,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                    console.log(data)
+                    $('#id_customer_currency_type').val(data.customer_curency)
+            }
+        })
+    })
+});
+
+
+$(document).ready(function(){
+    $('.numberinput,select[name=billing_type]').change(function(){
+
+        var number_of_resources = $('#id_number_of_resources').val();
+        var amount_per_billing_type = $('#id_amount_per_billing_type').val();
+        var no_of_man_hours_per_month = $('#id_no_of_man_hours_per_month').val()
+        var billing_type = $('#id_billing_type').val();
+        var customer_currency_type = $('#id_customer_currency_type').val()
+
+        var conversion_rate = $('#id_conversion_rate').val();
+
+        var tx_volume_duration_type = $('#id_tx_volume_duration_type').val();
+        var projected_tx_volume_per_day = $('#id_projected_tx_volume_per_day').val();
+        var projected_tx_volume_per_week = $('#id_projected_tx_volume_per_week').val();
+        var projected_tx_volume_per_month = $('#id_projected_tx_volume_per_month').val();
+
+        var operations_days = $('#id_workweek_days').val()
+
+
+        if(billing_type == 'per_fte'){
+            $('#div_id_no_of_man_hours_per_month').hide();
+            $('#div_id_tx_volume_duration_type').hide();
+            $('#div_id_projected_tx_volume_per_day').hide();
+            $('#div_id_projected_tx_volume_per_week').hide();
+            $('#div_id_projected_tx_volume_per_month').hide();
+        }
+        else if(billing_type == 'per_hour') {
+            $('#div_id_no_of_man_hours_per_month').show();
+            $('#div_id_tx_volume_duration_type').hide();
+            $('#div_id_projected_tx_volume_per_day').hide();
+            $('#div_id_projected_tx_volume_per_week').hide();
+            $('#div_id_projected_tx_volume_per_month').hide();
+
+        }else if(billing_type == 'per_tx'){
+            $('#div_id_no_of_man_hours_per_month').hide();
+            $('#div_id_tx_volume_duration_type').show();
+            $('#div_id_projected_tx_volume_per_day').show();
+            $('#div_id_projected_tx_volume_per_week').show();
+            $('#div_id_projected_tx_volume_per_month').show();
+        }
+        else{
+            $('#div_id_no_of_man_hours_per_month').show();
+            $('#div_id_tx_volume_duration_type').show();
+            $('#div_id_projected_tx_volume_per_day').show();
+            $('#div_id_projected_tx_volume_per_week').show();
+            $('#div_id_projected_tx_volume_per_month').show();
+        }
+
+        //alert(workhours_start);
+        //alert(workhours_end);
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'number_of_resources':number_of_resources,
+                'operations_days': operations_days,
+                'amount_per_billing_type' : amount_per_billing_type,
+                'no_of_man_hours_per_month':no_of_man_hours_per_month,
+                'billing_type':billing_type,
+                'conversion_rate':conversion_rate,
+                'customer_currency_type':customer_currency_type,
+
+
+                'tx_volume_duration_type':tx_volume_duration_type,
+                'projected_tx_volume_per_day':projected_tx_volume_per_day,
+                'projected_tx_volume_per_week': projected_tx_volume_per_week,
+                'projected_tx_volume_per_month': projected_tx_volume_per_month,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                    console.log(data)
+
+                    $('#id_projected_prj_value_per_month').val(data.projected_prj_value_per_month)
+                    $('#id_projected_prj_value_per_annum').val(data.projected_prj_value_per_annum)
+                    $('#id_fte_cost_per_month').val(data.fte_cost_per_month)
+
+                    if ( tx_volume_duration_type == 'per_day'){
+                        $('#id_projected_tx_volume_per_week').val(data.projected_tx_volume_per_week)
+                        $('#id_projected_tx_volume_per_month').val(data.projected_tx_volume_per_month)
+                    }
+                    else if(tx_volume_duration_type == 'per_week'){
+                        $('#id_projected_tx_volume_per_day').val(data.projected_tx_volume_per_day)
+                        $('#id_projected_tx_volume_per_month').val(data.projected_tx_volume_per_month)
+                    }
+                    else if(tx_volume_duration_type == 'per_month'){
+                        $('#id_projected_tx_volume_per_day').val(data.projected_tx_volume_per_day)
+                        $('#id_projected_tx_volume_per_week').val(data.projected_tx_volume_per_week)
+                    }
+
+            }
+        })
+    })
+});
+
+/*
+$(document).ready(function(){
+    $('.numberinput, select .timeinput ', $('#service_form')).change(function(){
+        var number_of_resources = $('#id_number_of_resources').val();
+        var amount_per_billing_type = $('#id_amount_per_billing_type').val();
+
+        var workweek_type_id = $('#id_workweek_type').val();
+        var workweek_start = $('#id_workweek_start').val();
+        var workweek_end = $('#id_workweek_end').val();
+
+        var workhours_start = $('#id_workhours_start').val();
+        var workhours_end = $('#id_workhours_end').val();
+        //alert(number_of_resources);
+        //alert(amount_per_billing_type);
+
+        var billing_type = $("#id_billing_type").val();
+
+        $.ajax({
+            url: "{% url 'get_sales_billings' %}",
+            data : {
+                'number_of_resources':number_of_resources,
+                'amount_per_billing_type' : amount_per_billing_type,
+                
+                'workweek_type_id':workweek_type_id,
+                'workweek_start' :workweek_start,
+                'workweek_end':workweek_end,
+
+                'workhours_start':workhours_start,
+                'workhours_end' : workhours_end,
+
+                'billing_type': billing_type,
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function(){
+                    //alert(sales_billing_list)
+                    //console.log(sales_billing_list)
+                    //var data = JSON.parse(sales_billing_list)
+
+                    //$('#id_workweek_days').val(data.operations_days)
+
+                    //$('#id_daily_work_hours').val(data.operational_hours)
+            }
+        })
+    })
+});
+*/
+$('.timeinput ').timepicker({ 'timeFormat': 'H:i ' });
+
+$('td.service_docs').find('select').on('change', function(event) {
+    event.preventDefault();
+    var self=$(this);
+    var rowIndex = self.parent().index();
+    //alert(rowIndex)
+    var docu =self.val();
+    //alert(docu)
+
+    if(docu=='other'){
+        self.parent().find('div.dvdocument').append("<input type='text' name='otherdocument' id='otherdocu' placeholder='Enter Document Type' size='20' />")
+        //$('#dvdocument').show();
+    }else{
+        $('#otherdocu').remove();
+    }
+})
+
+$(document).ready(function() {
+   function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+
+    // prepare Options Object for plugin
+
+        var options = {
+                    beforeSubmit: function(form, options) {
+                        // return false to cancel submit
+                        block_form();
+                    },
+                    success: function(response) {
+                        unblock_form();
+                        $("#mymodal").modal("hide");
+                        alert(response.success_msg)
+                        //var success_message = JSON.parse(response.responseText);
+
+                        setTimeout(function() {
+                            $("#form_ajax").hide();
+                        }, 5000);
+                        
+
+                    },
+
+        error: function(response) {
+            unblock_form();
+            $("#form_ajax_error").show();
+            // render errors in form fields
+            var errors = JSON.parse(response.responseText);
+             $("#errorid").append(errors.title);
+             console.log(errors)
+            for (error in errors.form_errors) {
+                var id = '#id_' + error;
+                $(id).parent('div').append(errors.form_errors[error]).attr("style", "color:red");
+            }
+
+
+
+            for (error in errors.sla_formset_errors) {
+                console.log(errors.sla_formset_errors)
+                if (error=='sla_type'){
+                    var id = '[id^=id_servicesla-][id$=-sla_type]';
+                    //alert(id)
+                    if ('#[id^=id_servicesla-][id$=-sla_type]' != 'value'){
+                        $(id).parent('td').append(errors.sla_formset_errors[error]).attr("style", "color:red");
+                    }
+                }
+                else if(error=='sla_value'){
+                    var id = '[id^=id_servicesla-][id$=-sla_value]';
+                    //alert(id)
+                    if ('#[id^=id_servicesla-][id$=-sla_value]' != 'value'){ 
+                        $(id).parent('td').append(errors.sla_formset_errors[error]).attr("style", "color:red");
+                    }
+                }
+            }
+
+            for (error in errors.document_formset_errors) {
+                
+                if (error=='document_type'){
+                    var id = '[id^=id_servicedoc-][id$=-document_type]';
+                    if ('#[id^=id_servicedoc-][id$=-document_type]' !='value'){
+                        $(id).parent('td').append(errors.document_formset_errors[error]).attr("style", "color:red");
+                    }
+                }
+                else if (error=='document'){
+                    var id = '[id^=id_servicedoc-][id$=-document]';
+                    if ('#[id^=id_servicedoc-][id$=-document]' !='value'){
+                        $(id).parent('td').append(errors.document_formset_errors[error]).attr("style", "color:red");
+                    }
+                }
+
+            }
+
+            for (error in errors.resource_formset_errors) {
+
+                if (error == 'experience_slab'){
+                    var id = '[id^=id_resource_plan-][id$=-experience_slab]';
+                    $(id).parent('td').append(errors.resource_formset_errors[error]).attr("style", "color:red");
+                }
+                else if (error == 'number_of_resources'){
+                    var id = '[id^=id_resource_plan-][id$=-number_of_resources]';
+                    $(id).parent('td').append(errors.resource_formset_errors[error]).attr("style", "color:red");
+                }
+                else if (error == 'output_count_per_resource'){
+                    var id = '[id^=id_resource_plan-][id$=-output_count_per_resource]';
+                    $(id).parent('td').append(errors.resource_formset_errors[error]).attr("style", "color:red");
+                }
+            }
+            setTimeout(function() {
+                $("#form_ajax_error").hide();
+             }, 5000);
+            clearForm:true
+            
+        },
+        
+    };
+
+
+
+    $('#service_form').ajaxForm(options);
+
+    $('#assign_service_lead_formsetTable tbody > tr').formset({
+            prefix: '{{ assign_service_lead_formset.prefix }}',
+            addText : 'Add',
+            deleteText: 'Delete',
+    });
+
+    $('#servicesla_formsetTable tbody > tr').formset({
+            prefix: '{{ servicesla_formset.prefix }}',
+            addText : 'Add',
+            deleteText: 'Delete',
+    });
+
+    $('#service_document_formsetTable tbody tr').formset({
+            prefix: '{{ service_document_formset.prefix }}',
+
+            addText : 'Add',
+            deleteText: 'Delete',
+    });
+    
+    $('#service_resource_formsetTable tbody tr').formset({
+            prefix: '{{ service_resource_formset.prefix }}',
+            addText : 'Add',
+            deleteText: 'Delete',
+    });
+
+
+});
+
+
+</script>

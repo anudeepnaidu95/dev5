@@ -1,0 +1,305 @@
+{% load i18n %}
+{% load format %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load templates_extras %}
+
+
+ <style>
+    #form_ajax_error, .errorlist {
+        color: red;
+    }
+</style>
+<div class="box">
+    <div class="box-body">
+        <div id="errorid" style="display:; color:red"></div>
+
+        {% if is_edit_mode %}
+
+            <form id="lead_form" action="{% url 'lead_edit' id %}" method="post" name="edit_enquiry"  class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}
+        {% else %}
+
+            <form id="lead_form" action="{% url 'lead_add' %}" method="post" name="new_enquiry" data-parsley-validate class="form-horizontal form-label-left" enctype="multipart/form-data">{% csrf_token %}        
+        {% endif %}
+
+                 {{ form.non_field_errors }}
+            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5">
+                
+                {{ form.title|as_crispy_field }}
+                {{ form.description|as_crispy_field}}
+                {{ form.contact_name|as_crispy_field}}
+                
+                {{ form.designation|as_crispy_field}}
+                
+                {{ form.requirement|as_crispy_field}}
+                
+                {{ form.industry|as_crispy_field}}
+                
+                {{ form.services|as_crispy_field}}
+            </div>
+            
+            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+                {{ form.email|as_crispy_field}}
+                
+                {{ form.phone|as_crispy_field}}
+                
+                {{ form.addressline1|as_crispy_field}}
+                {{ form.addressline1.errors }}
+                {{ form.addressline2|as_crispy_field}}
+                
+                {{ form.country|as_crispy_field}}
+                
+                {{ form.state|as_crispy_field}}
+                
+                {{ form.city|as_crispy_field}}
+                
+                {{ form.zip_code|as_crispy_field}}
+
+                {{ form.lead_date|as_crispy_field}}
+
+                {{ form.lead_source|as_crispy_field}}
+                
+
+                {{ form.other_lead_source|as_crispy_field}}
+
+                {{ form.is_converted_to_customer|as_crispy_field}}  
+                {% if request.user|has_group:"sales manager" %}
+                    {{ form.sales_rep|as_crispy_field}}
+                
+                {% elif request.user|has_group:"sales rep" %}
+                    {{ form.owner|as_crispy_field}}
+
+                {% endif %}
+
+            </div>
+           
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                 <table class="table table-bordered " id="myFormset1Table">
+
+                     {% if formset.error_dict %}
+                        <p style="color: red;">
+                            Please correct the error{{ formset.errors|pluralize }} below.
+                        </p>
+                    {% endif %}
+                    <thead>
+                        <tr>
+                         <th>Next FollowUp</th>
+                         <th>Lead Status</th>
+                         <th>Percentage</th>
+                         <th>Is converted to Customer</th>
+                         <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for followupFieldForm in followup_formset_forms.forms %} {{followupFieldForm.id}}
+                            {{ followupFieldForm.non_field_errors }}
+                            {{ followupFieldForm.errors }}
+                        <tr>
+                            {{ followup_formset_forms.non_form_errors }}
+                            <td>{{followupFieldForm.next_followup}}</td>
+                            <td>{{followupFieldForm.lead_status}}</td>
+                            <td>{{followupFieldForm.percentage}}</td>
+                            <td>{{followupFieldForm.is_converted_to_customer}}</td>
+                            <td>{{followupFieldForm.remarks}}</td>
+                            <td>
+                            {% if followup_formset_forms.can_delete %}
+                                {{ followupFieldForm.DELETE }}
+                            {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {{ followup_formset_forms.management_form }}
+                </table>
+                <div id="form_ajax_error" style="display:none; color:red">
+                <span>Can not submit data due to errors.</span>
+            </div>
+            <div id="form_ajax" style="display:none; color:green">
+                <span>Form submit successfully.</span>
+            </div>
+            
+            </div>
+
+            <input type="submit" value="Submit" class='btn btn-success pull-right' id="sendbutton"/>
+            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" style="margin-left: 5px;">Cancel</button>
+
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+    
+    $('select[name=industry]').change(function(){
+        var industry_id = $(this).val();
+        
+        $.ajax({
+            url: "{% url 'get_services' %}",
+            data : {'industry_id' : industry_id},
+            type: 'POST',
+            dataType: "json",
+            success: function(data){
+                console.log(data)
+                for( var i=0; i<data.length; i++){
+                    if(i==0){
+
+                        $('#id_services').html('<select name="services" id="id_services"><option value=' + data[i]['pk']+' > ' + data[i]["title"] + '</option> </select>')
+                    }
+                    else {
+                        $('#id_services').append('<option value=' + data[i]['pk']+' > ' + data[i]["title"] + '</option>')
+                    }
+                }
+            }
+ 
+        })
+    })
+
+});
+
+
+function renewDatePickers(){
+     $('.datefield').datepicker('destroy');
+     $(".datefield").datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1990:2050",
+    });
+}
+
+$(renewDatePickers);
+
+
+$(function() {
+    $('#lead_form tbody tr').formset({
+        prefix: '{{ followup_formset_forms.prefix }}',
+        addText : 'Add',
+        deleteText: 'Delete',
+        added: renewDatePickers
+    });
+
+
+});
+
+
+$(document).ready(function() {
+   function block_form() {
+                //$("#loading").show();
+                $('textarea').attr('disabled', 'disabled');
+                $('input').attr('disabled', 'disabled');
+            }
+
+            function unblock_form() {
+               // $('#loading').hide();
+                $('textarea').removeAttr('disabled');
+                $('input').removeAttr('disabled');
+                $('.errorlist').remove();
+            }
+            // prepare Options Object for plugin
+            var options = {
+                beforeSubmit: function(form, options) {
+                    // return false to cancel submit
+                    block_form();
+                },
+                success: function(response) {
+                    unblock_form();
+                    $("#mymodal").modal("hide");
+                    alert(response.success_msg)
+                    //var success_message = JSON.parse(response.responseText);
+
+                    console.log(success_message.success_msg)
+                    
+                    setTimeout(function() {
+                        $("#form_ajax").hide();
+                    }, 5000);
+                    /*
+                    $("#success_messages").append('<p style="color:green;" class="success_msgs">' + success_message.success_msg + '</p>') ;
+                    setTimeout(function() {
+                        $("#success_messages").hide();
+                    }, 5000);
+
+                    */
+
+                },
+        error: function(response) {
+
+            unblock_form();
+            $("#form_ajax_error").show();
+            // render errors in form fields
+            var errors = JSON.parse(response.responseText);
+            console.log(errors)
+             $("#errorid").append(errors.title);
+            for (error in errors.form_errors) {
+                var id = '#id_' + error;
+                $(id).parent('div').append(errors.form_errors[error]).attr("style", "color:red");
+            }
+
+            console.log(errors.formset_errors)
+            for (error in errors.formset_errors) {
+                    console.log(error)
+
+                //var id = '[id^=id_followups-]' + error;
+                //alert(id)
+                //$(id).parent('td').append(errors.formset_errors[error]).attr("style", "color:red");
+
+                if (error == 'next_followup'){
+                    var id = '[id^=id_followups-][id$=-next_followup]';
+                    //alert(id)
+                    $(id).parent('td').append(errors.formset_errors[error]).attr("style", "color:red");
+                }
+                else if (error == 'lead_status'){
+                    var id = '[id^=id_followups-][id$=-lead_status]';
+                    //alert(id)
+                    $(id).parent('td').append(errors.formset_errors[error]).attr("style", "color:red");
+                }
+                
+                else {
+                    var id = '[id^=id_followups-][id$=-percentage]';
+                   // alert(id)
+                    $(id).parent('td').append(errors.formset_errors[error]).attr("style", "color:red");
+                }
+            }
+            setTimeout(function() {
+                $("#form_ajax_error").hide();
+            }, 5000);
+        },
+        clearForm:true
+    };
+ 
+    $('#lead_form').ajaxForm(options);
+
+     $('#id_lead_date').datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1990:2050",
+    });
+
+
+});
+
+</script>
+<script type="text/javascript">
+ /*   $(document).ready(function() {
+            
+            //attach keypress to input
+            $('#id_phone ').keydown(function(event) {
+                // Allow special chars + arrows 
+                if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9||event.keyCode == 32 ||event.keyCode == 189 ||event.keyCode == 190  
+                    || event.keyCode == 27 || event.keyCode == 13 ||event.keyCode == 187 ||event.keyCode == 107 ||event.keyCode == 109 ||event.keyCode == 51
+                    || (event.keyCode == 65 && event.ctrlKey === true) 
+                    || (event.keyCode >= 35 && event.keyCode <= 39)){
+                        return;
+                }else {
+                    // If it's not a number stop the keypress
+                    if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                        event.preventDefault(); 
+                    }   
+                }
+            });
+            
+        });*/
+</script>

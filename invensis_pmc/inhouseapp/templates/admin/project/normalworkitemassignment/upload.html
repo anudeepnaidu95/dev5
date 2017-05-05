@@ -1,0 +1,90 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls admin_static %}
+ 
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "css/user.css" %}"/>
+{% endblock %}
+ 
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a>
+        &rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">
+        {{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+        &rsaquo; {% trans 'Upload' %}
+    </div>
+{% endblock %}
+ 
+{% block content %}
+     <form action="{{ form_url }}" method="POST" id="{{ opts.module_name }}_form" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+
+            {% include 'suit/form_as_fieldset.html' %}
+            <div class="submit-row submit-row-bottom">
+                <input type="submit" value="{% trans "Import" %}" class="btn btn-info"/>
+            </div>
+
+        </form>
+
+        {% for row in rows_updated %}
+             <li>
+                
+                <pre class="traceback">{{ row }}</pre>
+            </li>
+        {% endfor %}
+
+
+
+        {% for error in rows_error %}     
+              <li>           
+                <pre class="traceback">{{ error }}</pre>
+            </li>
+           
+        {% endfor %}
+      
+         {% if result %}
+            {% if result.has_errors %}
+                <div class="alert alert-error alert-block">
+                    <h4>{% trans "Errors" %}</h4>
+                    <ul>
+                        {% for error in result.base_errors %}
+                            <li>{{ error.error }}</li>
+                        {% endfor %}
+                        {% for line, errors in result.row_errors %}
+                            {% for error in errors %}
+                                <li>
+                                    {% trans "Line number" %}: {{ line }} - {{ error.error }}
+                                    <pre class="traceback">{{ error.traceback|linebreaks }}</pre>
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+
+            <h2>{% trans "Preview" %}</h2>
+            <table class="table table-bordered table-hover table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    {% for field in fields %}
+                        <th>{{ field }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% for row in rows_updated %}
+                    <tr>
+                        <td>
+                           {{row.title}}
+                        </td>
+                     
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+    {% endif %} 
+
+
+{% endblock %}

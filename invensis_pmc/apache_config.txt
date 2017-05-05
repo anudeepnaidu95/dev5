@@ -1,0 +1,57 @@
+<VirtualHost *:80>
+
+    ServerAdmin webmaster@inhouseapp.com
+    ServerName  www.inhouseapp.com
+    ServerAlias inhouseapp.com    
+
+    Alias /static /home/dev1/www/inhouseapp_final/static
+    <Directory /home/dev1/www/inhouseapp_final/static>
+        Order deny,allow
+         Allow from all
+    </Directory>
+
+    <Directory /home/dev1/inhouseapp_final/inhouseapp>
+        <Files wsgi.py>
+            Order deny,allow
+             Allow from all
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess myinhouseapp python-path=/home/dev1/inhouseapp_final:/home/dev1/.virtualenvs/inhouseapp_final/lib/python2.7/site-packages
+    WSGIProcessGroup myinhouseapp
+    WSGIScriptAlias / /home/dev1/inhouseapp_final/inhouseapp/wsgi.py
+
+
+    # Logfiles
+    #ErrorLog  /home/dev1/www/inhouseapp_final/logs/error.log
+    #CustomLog /home/dev1/www/inhouseapp_final/logs/access.log combined
+</VirtualHost>
+
+<VirtualHost *:82>
+
+    ServerAdmin webmaster@inhouseapp_test.com
+    ServerName  www.inhouseapp_test.com
+    ServerAlias inhouseapp_test.com    
+
+    Alias /static /home/dev1/www/inhouseapp_test/static
+    <Directory /home/dev1/www/inhouseapp_test/static>
+        Order deny,allow
+         Allow from all
+    </Directory>
+
+    <Directory /home/dev1/inhouseapp_test/inhouseapp>
+        <Files wsgi.py>
+            Order deny,allow
+             Allow from all
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess myinhouseapp python-path=/home/dev1/inhouseapp_test:/home/dev1/.virtualenvs/inhouseapp_test/lib/python2.7/site-packages
+    WSGIProcessGroup myinhouseapp_test
+    WSGIScriptAlias / /home/dev1/inhouseapp_test/inhouseapp/wsgi.py
+
+
+    # Logfiles
+    #ErrorLog  /home/dev1/www/inhouseapp_test/logs/error.log
+    #CustomLog /home/dev1/www/inhouseapp_test/logs/access.log combined
+</VirtualHost>

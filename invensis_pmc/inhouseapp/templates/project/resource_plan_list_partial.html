@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>ServiceResourcePlan</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'resource_plan_add' %}" data-list-div="resource_plan_list_div" data-list-div-url="{% url 'resource_plan_list' %}" data-title="Add ServiceResourcePlan" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="resource_plan_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+
+                    <th>Customer Service</th>
+
+                    <th>Experience Slab</th>
+                    <th>Number Of Resources</th>
+                    <th>Target</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resource_plan %}
+                    <tr class="even pointer">
+
+                        <td class=" ">{{ resource.service }} </td>
+                        <td class=" ">{{ resource.experience_slab }} </td>
+                        <td class=" ">{{ resource.number_of_resources }}</td>
+                        <td class=" ">{{ resource.output_count_per_resource }}</td>
+
+                        
+                        <td class="">
+                            <button type="button" data-toggle="modal" data-url="{% url 'resource_plan_edit' resource.id %}" data-list-div="resource_plan_list_div" data-list-div-url="{% url 'resource_plan_list' %}" data-title="Edit ServiceResourcePlan" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#resource_plan_list_table').dataTable();
+})
+</script>

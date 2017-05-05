@@ -1,0 +1,266 @@
+{% extends 'layout.html' %} 
+{% load i18n %} 
+{% load staticfiles %} 
+{% load crispy_forms_tags %} 
+
+{% block title %} 
+{% trans "CRM" %} 
+{% endblock %}
+
+{% block head %}
+    
+    {{ block.super }}
+
+<style>
+  body { 
+    position: relative; 
+  }
+
+    
+.nav .active {
+  font-weight: bold;
+  background: #72bcd4;
+}
+
+.nav .nav {
+  display: none;
+}
+
+.nav .active .nav {
+  display: block;
+}
+
+.nav .nav a {
+  font-weight: normal;
+  font-size: .85em;
+}
+
+.nav .nav span {
+  margin: 0 5px 0 2px;
+}
+
+.nav .nav .active a,
+.nav .nav .active:hover a,
+.nav .nav .active:focus a {
+  font-weight: bold;
+  padding-left: 30px;
+  border-left: 5px solid black;
+}
+
+.nav .nav .active span,
+.nav .nav .active:hover span,
+.nav .nav .active:focus span {
+  display: none;
+}
+
+.loadingdiv
+{
+  background: url("img/ajax-loader.gif");
+    z-index: 1000;
+    margin: 300px auto;
+    padding: 10px;
+    width: 130px;
+    background-color: White;
+    border-radius: 10px;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -moz-opacity: 1;
+}
+.loadingdiv img
+{
+    height: 60px;
+    width: 60px;
+}
+
+.affix{
+  width:153px;
+}
+    </style>
+
+{% endblock head %}
+
+{% block body_attributes %}
+    
+    {{ block.super }}
+    data-spy="scroll" data-target="#navbar-example"
+{% endblock body_attributes %}
+
+{% block content %}
+    
+    <div class="row">
+          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+              <div class="affix"  id="navbar-example">
+
+                <ul class="nav nav-tabs" role="tablist" id="qcdash" ata-offset-top="120" data-spy="affix">
+                <li> <a href="#staff_task_list_div">Staff Tasks</a> </li>
+                <li> <a href="#qc_task_list_div">Qc Tasks</a> </li>
+                <li> <a href="#qc_task_hist_list_div">Qc Task History List</a> </li>
+
+                </ul>
+              </div>            
+          </div>
+        
+        <div class="col-md-10  col-sm-12 col-xs-12">
+              <div class="panel-body" id="staff_task_list_div"></div>
+              <div class="panel-body" id="qc_task_list_div"></div>
+              <div class="panel-body" id="qc_task_hist_list_div"></div>
+        </div>
+      
+    </div>
+
+<!-- Large modal -->
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="qcmodal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" id="closemodel" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
+              </div>
+
+               <div class="modal-body">
+                    <div class="container-fluid">
+                        
+                        <div class="row">
+                            <div class=".col-xs-2 .col-sm-2 col-md-12 col-lg-12">
+                                
+                                <div id="content_div"></div>
+                            </div>
+                        </div>
+                    </div>
+               </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(function() {
+    
+        // Assign handlers immediately after making the request,
+        // and remember the jqXHR object for this request
+       var jqxhr = $.ajax( "{% url 'staff_task_list' %}" )
+          .done(function(response) {
+            // alert( "success" );
+            $('#staff_task_list_div').html(response);
+
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+
+
+        var jqxhr = $.ajax( "{% url 'qc_task_list' %}" )
+
+          .done(function(response) {
+            // alert( "success" );
+            $('#qc_task_list_div').html(response);
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+        var jqxhr = $.ajax( "{% url 'qc_task_hist_list' %}" )
+
+          .done(function(response) {
+            // alert( "success" );
+            $('#qc_task_hist_list_div').html(response);
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });
+        // $('form[data-async]').live('submit', function(event) {
+        //     var $form = $(this);
+        //     var $target = $($form.attr('data-target'));
+    
+        //     $.ajax({
+        //         type: $form.attr('method'),
+        //         url: $form.attr('action'),
+        //         data: $form.serialize(),
+    
+        //         success: function(data, status) {
+        //             $target.html(data);
+        //         }
+        //     });
+     
+        //     event.preventDefault();
+        // });  
+
+            
+var list_div = null;
+var list_div_url=null;    
+    
+        $('.bs-example-modal-lg').on('show.bs.modal', function (event) {
+        
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var url = button.data('url') // Extract info from data-* attributes
+          var title = button.data('title') // Extract info from data-* attributes
+          list_div = button.data('list-div') // Extract info from data-* attributes
+          list_div_url = button.data('list-div-url') // Extract info from data-* attributes
+           
+            $('#content_div').html("");
+    
+        var jqxhr = $.ajax( url )
+          .done(function(response) {
+            // alert( "success" );
+            $('#content_div').html(response);
+            $(".spinner").show();
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+            // alert( "complete" );
+          });  
+
+          
+          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+          var modal = $(this);
+          modal.find('.modal-title').text(title);
+
+          // modal.find('.modal-body input').val(recipient)
+        });
+    
+    
+        $('.bs-example-modal-lg').on('hidden.bs.modal', function (e) {
+
+            if (list_div_url && list_div) {
+
+              var jqxhr = $.ajax( list_div_url )
+              .done(function(response) {
+                // alert( "success" );
+                $('#' + list_div).html(response);
+                
+              })
+              .fail(function() {
+                alert( "error" );
+              })
+              .always(function() {
+                // alert( "complete" );
+              });    
+            }
+          // do something...
+        });
+    
+    
+    });
+
+
+
+</script>
+
+<!-- /page content -->
+
+{% endblock %}

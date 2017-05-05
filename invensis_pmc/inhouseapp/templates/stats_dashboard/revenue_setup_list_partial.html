@@ -1,0 +1,54 @@
+
+{% load i18n %} 
+{% load staticfiles %} 
+{% load templates_extras %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Revenue Setup</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'revenue_setup_add' %}" data-list-div="revenue_setup_list_div" data-list-div-url="{% url 'revenue_setup_list' %}" data-title="Add Revenue Setup" data-target=".bs-example-modal-lg">New</button>
+    </div>
+    <div class="panel-body">
+        <table id="revenue_setup_list_table" class="table table-striped table-bordered hover order-column "cellspacing="0" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th>Red Region</th>
+                    <th>Yellow Region</th>
+                    <th>Green Region </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in revenue_setup_list %}
+                    <tr class="even pointer">
+                        <td class=" ">{{ type.red_region }}</td>
+                        <td class=" ">{{ type.yellow_region }}</td>
+                        <td class=" ">{{ type.green_region }}</td>
+                          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            
+                        <td class="">
+                            <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'revenue_setup_edit' type.id %}" data-list-div="revenue_setup_list_div" data-list-div-url="{% url 'revenue_setup_list' %}" data-title="Edit Revenue Setup" data-target=".bs-example-modal-lg">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src ="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"></script>
+<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"</script>
+
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js">
+
+<script type="text/javascript">
+
+$(function () {
+    // body...
+    $('#revenue_setup_list_table').dataTable();
+})
+</script>  
+

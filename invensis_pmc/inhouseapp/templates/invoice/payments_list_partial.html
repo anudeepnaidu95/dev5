@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Payment Details</h4>
+    </div>
+
+    <div class="panel-body">
+        <table id="payments_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Payment Date</th>
+                    <th>Payment Amount</th>
+                    <th>Cheque Number</th>
+                    <th>Transaction Id</th>
+                    <th>Email Id</th>
+                    <th>Mode of Payment</th>
+                    <th>Bank Account</th>
+                </tr>
+            </thead>
+        <tbody>
+            {% for payment in payments_lists %}
+                <tr class="even pointer">
+                    <td class=" ">{{ payment.payment_date }}</td>
+                    <td class=" ">{{ payment.payment_amount }}</td>
+                    <td class=" ">{{ payment.cheque_no }} </td>
+                    <td class=" ">{{ payment.transaction_id }}</td>
+                    <td class=" ">{{ payment.email_id }}</td>            
+                    <td class=" ">{{ payment.mode_of_payment }}</td>
+                    <td class=" ">{{ payment.bank_account }}</td>
+                </tr>                
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#payments_list_table').dataTable();
+    })
+</script>

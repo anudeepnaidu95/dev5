@@ -1,0 +1,49 @@
+{% load templates_extras %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {% if request.user|has_group:"management" %}
+            <h4>Customer Invoices</h4>
+        {% endif %}
+    </div>
+
+    <div class="panel-body">
+        <table id="customer_invoice_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                                 
+                  <th>Invoice No</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        {% if request.user|has_group:"management" %}
+                             <th>Total Amount</th>
+                             <th></th>
+                        {% endif %}   
+                </tr>
+            </thead>
+            <tbody>
+                    {% for invs in cust_tuple.1 %}
+                        <tr class="odd pointer"
+                            <td class=" "></td>
+                            <td class=" ">{{ invs.invoice_no }}</td>
+                            <td class=" ">{{ invs.date }}</td>
+                            <td class=" ">{{ invs.start|date:"M d, Y" }}</td>
+                            <td class=" ">{{ invs.end|date:"M d, Y" }}</td>
+                            
+                            {% if request.user|has_group:"management" %}
+                            <td class=" ">{{ invs.total_amount }}</td>
+                            <td>
+                                <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'invoice_edit' invoice_id=invs.id %}" data-list-div="invoice_list_div" data-list-div-url="{% url 'invoice_view_details' %}" data-title="Edit Invoice Details for Customer - {{cust_tuple.0.title}}"  data-target=".bs-example-modal-lg">Edit Invoice</button>
+                                <br></br>
+                                <!--<button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'payment_list_and_add' invoice_id=invs.id %}" data-list-div="payments_list_div"data-title="Payment Details for Invoice - {{invs.invoice_no}}"  data-target=".bs-example-modal-lg">Payments</button> -->
+                                <a href= "{% url 'invoice_generator' invoice_id=invs.id %}"<button type="button" data-toggle="modal"  class="btn btn-success" name="invoice_pdf">ViewPdf</button></a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -1,0 +1,54 @@
+{% load i18n %} 
+{% load staticfiles %} 
+{% block head %}
+    <style>
+        div.dataTables_processing { z-index: 1; }
+    </style>
+{% endblock %}
+
+ <div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">  
+            <h4>Currency Type </h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'currency_type_add' %}" data-list-div="currency_type_list_div" data-list-div-url="{% url 'currency_type_list' %}" data-title="Add Currency Type" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="currency_type_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Currency Type</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for currency in currencies %}
+                <tr class="even pointer">
+                    <td class=" ">{{ currency.title }}</td>
+                    <td class=" ">{{ currency.description }} </td>
+                      
+                    <td class="last">
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'currency_type_edit' currency.id %}" data-list-div="currency_type_list_div" data-list-div-url="{% url 'currency_type_list' %}" data-title="Edit Currency Type" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#currency_type_list_table').dataTable({
+            
+            processing: true,
+            serverSide: false,
+             
+        });
+    })
+
+</script>

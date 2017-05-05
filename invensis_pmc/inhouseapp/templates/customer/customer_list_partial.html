@@ -1,0 +1,51 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">
+            <h4>Customers</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'customer_add' %}" data-list-div="customer_list_div" data-list-div-url="{% url 'customers_list' %}" data-title="Add Customer" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body" style="overflow:scroll">
+        <table id="customer_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Company</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Industry</th>
+                    <th>Country</th>
+                    <th ></th>                
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr class="even pointer">
+                    <td class=" ">{{ customer.title }}</td>
+                    <td class=" ">{{ customer.contact_name }} </td>
+                    <td class=" ">{{ customer.email }}</td>
+                    <td class=" ">{{ customer.phone }}</td>            
+                    <td class=" ">{{ customer.industry }}</td>
+                    <td class=" ">{{ customer.country }}</td>
+                    <td class="last">
+                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-url="{% url 'customer_edit' customer.id %}"data-list-div="customer_list_div" data-list-div-url="{% url 'customers_list' %}" data-title="Edit Customer" data-target=".bs-example-modal-lg">Edit</button>
+
+                        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'customers_view' customer.id%}" data-list-div="customer_list_div" data-list-div-url="{% url 'customers_list' %}" data-title="View Customer" data-target=".bs-example-modal-lg">View</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#customer_list_table').dataTable({
+            "responsive": true,
+
+        });
+    })
+</script>
+

@@ -1,0 +1,50 @@
+{% load i18n %}
+{% load staticfiles %}
+
+
+{# Scripts #}
+    
+   
+    
+
+    <script src="{% static 'js/jquery.cookie.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>    
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+ 
+    <script src="{% static 'js/holder.js' %}"></script>
+    <script src="{% static 'js/jquery.growl.js' %}"></script>
+    
+    <!-- lte --> 
+    <script src="{% static 'js/plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'js/lte/app.min.js' %}"></script>
+    <script src="{% static 'js/lte/demo.js' %}"></script>
+    <!-- Datatables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+  
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    
+    <script src="{% static 'js/jquery.timepicker.min.js' %}"></script>
+    
+    <script src="{% static 'js/jquery.form.min.js' %}"></script>
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+    
+    <script src="{% static 'js/gauge.js' %}"></script>
+    
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    
+    {# In most of cases following 3 filest must be at end of the list #}
+    <script src="{% static 'js/project.js' %}"></script>
+    <script src="{% static 'js/project.widgets.js' %}"></script>
+    <script src="{% static 'js/user.js' %}"></script>
+
+
+    
+       
+   <!--
+    {# Temporary added here to show alert in every page #}
+    <script type="text/javascript">
+        $.growl({"title": "{% trans "Inhouseapp" %}", "message": "{% trans "Welcome to website." %}"});
+    </script>
+    -->

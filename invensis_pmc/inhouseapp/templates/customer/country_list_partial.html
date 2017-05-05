@@ -1,0 +1,54 @@
+{% load i18n %} 
+{% load staticfiles %} 
+{% block head %}
+    <style>
+        div.dataTables_processing { z-index: 1; }
+    </style>
+{% endblock %}
+
+ <div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-11">  
+            <h4>Country Types</h4>
+        </div>
+        <button type="button" class="btn btn-primary " data-toggle="modal" data-url="{% url 'country_add' %}" data-list-div="country_list_div" data-list-div-url="{% url 'country_list' %}" data-title="Add Country" data-target=".bs-example-modal-lg">New</button>
+    </div>
+
+    <div class="panel-body">
+        <table id="country_list_table" class="table table-striped table-bordered hover order-column  cellspacing="0" width="100%"">
+            <thead>
+                <tr class="headings">
+                    <th>Country Name</th>
+                    <th>Code</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for country in countries %}
+                <tr class="even pointer">
+                    <td class=" ">{{ country.name }}</td>
+                    <td class=" ">{{ country.code }} </td>
+                      
+                    <td class="last">
+                        <button type="button" data-toggle="modal"  class="btn btn-secondary" data-url="{% url 'country_edit' country.id %}" data-list-div="country_list_div" data-list-div-url="{% url 'country_list' %}" data-title="Edit Country" data-target=".bs-example-modal-lg">Edit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#country_list_table').dataTable({
+            
+            processing: true,
+            serverSide: false,
+             
+        });
+    })
+
+</script>

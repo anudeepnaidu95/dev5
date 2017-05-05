@@ -1,0 +1,138 @@
+{% load i18n %} 
+{% load staticfiles %} 
+<style>
+.loading img{
+
+        z-index: 1000;
+        margin: auto;
+        padding: 10px;
+        width: 80px;
+        background-color: White;
+        border-radius: 10px;
+        filter: alpha(opacity=100);
+        opacity: 1;
+        -moz-opacity: 1;
+}
+
+</style>
+
+
+   <div class="panel panel-default">
+
+     <div class="panel-heading">
+            
+        
+            <thead>
+            
+              
+                   <tr >
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-5 col-lg-offset-1">
+                        <p><label>Project Name:</label><span>{{service.title}}</span></p>
+                        <p><label>Customer:</label><span>{{service.customer}}</span></p>
+                        <p><label>Shift Timings:</label><span>{{service.shift_timings}}</span></p>
+                        <p><label>Project Type:</label><span>{{service.project_type}}</span></p>
+                        <p><label>Service Type:</label><span>{{service.service_type}}</span></p>
+                        <p><label>Number of resources:</label><span>{{service.number_of_resources}}</span></p>
+                        <p><label>Operational Days:</label><span>{{service.workweek_days}}</span></p>
+                        <p><label>Operation Hours:</label><span>{{service.daily_work_hours}}</span></p>
+                        <p><label>Keynotes:</label><span>{{service.key_notes}}</span></p>
+                        <p><label></label><span></span></p>
+                        </div>                        
+                        <p><label>Billing Type:</label><span>{{service.billing_type}}</span></p>
+                        <p><label>Billing Interval In Days:</label><span>{{service.billing_interval_in_days}}</span></p>
+                        <p><label>Pricing:</label><span>{{service.amount_per_billing_type}}</span></p>
+                        <p><label>Number of man hours per month:</label><span>{{service.no_of_man_hours_per_month}}</span></p>
+                        <p><label>Estimated transactions:</label><span>{{service.tx_volume_duration_type}}</span></p>
+                        <p><label>Projected Transactions Per Day:</label><span>{{service.projected_tx_volume_per_day}}</span></p>
+                        <p><label>Projected Transactions Per Week:</label><span>{{service.projected_tx_volume_per_week}}</span></p>
+                        <p><label>Projected Transactions Per Month:</label><span>{{service.projected_tx_volume_per_month}}</span></p>
+                        <p><label>FTE cost per month:</label><span>{{service.fte_cost_per_month}}</span></p>
+                        <p><label>Operations manager:</label><span>{{service.operations_manager}}</span></p>
+                       
+
+                    </div>
+                       </div>
+                       </div>
+                       </tr>
+          
+                    <table class="table table-bordered  " id="servicesla_formsetTable">
+                        <thead>
+                            <tr>
+
+                             <th>SLA Parameters </th>
+                             <th>SLA Metrics</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for sla in sla %}
+                            <tr>
+                                <td>{{sla.sla_type}}</td>
+                                <td>{{sla.sla_value}}</td>
+                                
+                            </tr>  
+                        </tbody>
+                        {%endfor%}
+                    </table>
+                    </div>
+                    
+                   
+                     <table class="table table-bordered " id="service_document_formsetTable">
+                        <thead>
+                            <tr>
+                                <th>Document Type </th>
+                                <th>Document</th>
+                                <th>Share With Others</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for documents in documents %}
+                            <tr>
+                                <td>{{documents.document_type}}</td>
+                                <td>{{documents.document}}</td>
+                                <td>{{documents.share_with_others}}</td>
+                                
+                            </tr>  
+                        </tbody>
+                        {%endfor%}
+                    </table>
+                    </div> 
+
+                   
+                    <table class="table table-bordered  " id="service_resource_formsetTable">
+                        <thead>
+                            <tr>
+                             <th>Experience Slab</th>
+                             <th>Number of Resources</th>
+                             <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for resource in resource %}
+                            <tr> 
+                                <td>{{resource.experience_slab}}</td>
+                                <td>{{resource.number_of_resources}}</td>
+                                <td>{{resource.output_count_per_resource}}</td>
+                                
+                            </tr> 
+                        </tbody>
+                        {%endfor%} 
+                    </table>
+                    </div>
+           
+                       
+
+               
+                        <!-- <p><label>Pricing:</label><span>{{service.encrypt_pricing}}</span></p>
+                        <p><label>Pricing:</label><span>{{service.encrypt_fte_cost_per_month}}</span></p>
+                        <p><label>Projected Project Value per month:</label><span>{{service.encrypt_projected_prj_value_per_month}}</span></p>
+                        <p><label>Projected Project Value per annum:</label><span>{{service.encrypt_projected_prj_value_per_annum}}</span></p>
+                    -->
+                  
+           
+             
+
+                   </thead>
+           
+   
+</div>

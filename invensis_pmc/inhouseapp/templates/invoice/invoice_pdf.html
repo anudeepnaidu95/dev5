@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<style>
+ @font-face {
+      font-family: 'Trebuchet MS';
+      src: url("trebuchet-ms/trebuc.ttf");
+    }
+  #main {
+
+    width:100%;
+    margin: 0 auto;
+    font-size: 15px;
+    
+     
+  }
+  body {font-family: Trebuchet MS, Arial, Helvetica, sans-serif; font-size: 12px}
+p {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    
+    
+}
+.heading5{
+     border-bottom: 1px solid; 
+}
+u1{
+
+     /*font-weight: bold;*/
+    
+}
+
+table tr td {
+border:none;}
+ 
+    
+    
+</style>
+<body>
+<div id="main">
+<div class="header">
+  <img src="assets/static/img/logos.gif" alt="logo" width="190" height="60">
+</div>
+
+<div>
+<div style=" padding: 0 0 0 320px;"><b><u>Invoice</u></b></div>
+
+
+<TABLE border="1" WIDTH="100%" style="" >
+
+    <TR valign="top"><TD  style="border-right:1px solid #000; padding:5px 0 0 5px;" height="50px"><b>From:</b><br><b>
+
+   {{invoice_setup.company_name}} </b><br>{{invoice_setup.addressline1}} <br> {{invoice_setup.addressline2}}<br>{{invoice_setup.city}}- {{invoice_setup.pincode}} <br> INDIA.<br><b> Ph:{{invoice_setup.phone}}</b> <br><b>Email:</b><a href="">{{invoice_setup.email}} </a> <br>{{invoice_list.invoice_no}}<br> Date:{{invoice_list.date}} 
+
+
+</TD>
+
+
+<TD valign="top" style="padding:5px 0 0 5px"><b>To: </b><br> Attn:- {{ invoice_list.customer }} <br> Email: {{ invoice_list.customer.email }}</TD></tr>
+    
+<TR >
+
+      <Td colspan="2" style="border-top:1px solid #000; padding:5px 0 2px 2px"><b>Project Name:</b></Td>
+
+   </TR>    
+
+</TABLE>
+
+<TABLE border="0" WIDTH="100%">
+   
+    <tr  style="">
+    
+    <TD align="center" style="border-right:1.5px solid #000; border-bottom:1.5px solid #000; border-left:1.5px solid #000;padding:2px 0 2px 0px"><b>SLNo</b></TD>
+    <TD align="center" style="border-right:1.5px solid #000; border-bottom:1.5px solid #000; border-left:1.5px solid #000;padding:5px 0 2px 2px"><b>PROJECT DESCRIPTION</b></TD>
+    <TD align="center" style="border-right:1.5px solid #000; border-bottom:1.5px solid #000; border-left:1.5px solid #000;padding:5px 2px 2px 2px"> <b>AMOUNT {{customer.currency}} </b></TD>
+
+    </tr>
+   
+   {% for service_invoice in service_invoices%}
+    <tr >
+        <td width="10%" align="center" style="border-right:1.5px solid #000; border-bottom:1.5px solid #fff; border-left:1.5px solid #000; padding:2px 0 0px 2px;">{{forloop.counter}}</td>
+       <td width="60%"  style="border-right:1.5px solid #000; border-bottom:1.5px solid #fff; border-left:1.5px solid #000;padding:4px 0 0px 5px;"> {{service_invoice.service}} </td>
+       <td width="30%" align="center"  style="border-right:1.5px solid #000; border-bottom:1.5px solid #fff; border-left:1.5px solid #000;padding:4px 0 0 5px;">{{service_invoice.invoice_amount}} </td>
+    </tr>
+   {% endfor %}
+
+ </TABLE> 
+
+
+
+
+
+<TABLE border="1" WIDTH="100%" height="40">
+    <Tr style=""><TD width="10%" style="border-right:1px solid #000;border-right:1px solid #000;">&nbsp; &nbsp; </TD>
+                <TD width="60%"  style="border-right:1px solid #000;border-right:1px solid #000; padding:5px 0 2px 5px"><b>Total Project Value per month:</b></TD>
+                <TD width="30%" align="center" style="padding-left:25px" >{{invoice_list.total_amount}}&nbsp;&nbsp;{{customer.currency}}</b></TD>
+</TABLE>
+ <div> 
+  {% if paypal_setup_mode.is_applicable %}
+    <p><b> Payment Mode: </b> Wire Transfer/PAYPAL payable to <a href="" >{{paypal_setup_mode.payable_to_email}} </a><br>  
+    <b> For Credit Card Payment:&nbsp</b> Our Accounts team will send out be a secure link to make the Transaction.<br>Please Add a surcharge of {{paypal_setup_mode.surcharge_percent}} for payments using Credit Card and PAYPAL.<br>
+    <b> Your Total Payable amount is :-&nbsp</b>{{payble_amount|floatformat:1}}</p>
+  {% endif %}
+</div>
+
+<div>
+  {% if wiretransfer_setup_mode.is_applicable and wiretransfer_setup_mode.show_only_beneficiary_details %}
+      <p ><u> Wire Transfer Details: </u><br>
+      <b> Benificiary Name:&nbsp&nbsp{{wiretransfer_setup_mode.beneficiary_name}} </b><br>
+      <b> Bank:&nbsp&nbsp{{wiretransfer_setup_mode.beneficiary_bank_name}} </b><br>
+      <b  style="font-size: 13px;"> ROUTING NUMBER:&nbsp&nbsp{{wiretransfer_setup_mode.beneficiary_routing_number}} </b><br>
+      <b  style="font-size: 13px;"> ACC NUMBER:&nbsp&nbsp{{wiretransfer_setup_mode.beneficiary_account_number}} </b><br>
+      <b  style="font-size: 13px;"> SWIFT ID:&nbsp&nbsp{{wiretransfer_setup_mode.beneficiary_swift_code}}</b> </p>
+
+  {% elif wiretransfer_setup_mode.is_applicable  %}
+</div>
+
+    <TABLE border="1" WIDTH="100%" height="30">
+      <tr>
+         <TD align="left" style="border:1px solid #000;padding-left:5px">
+      <p style="padding:10px 0px 0px 10px "><b>Wire Transfer Details:</b></p>
+    
+    </TD>
+
+    <TD align="left" style="border:1px solid #000;padding-left:5px">
+      <p style="padding:10px 0px 0px 10px;"> <b>Correspondent Bank Details:</b></p>
+    </TD>
+
+    <TD align="left" style="border:1px solid #000;padding-left:5px"> 
+        <p style="padding:10px 0px 0px 10px;"><b style="padding-bottom:10px;">Further Credit Bank Details:</b></p>
+    </TD>
+    </tr>
+   
+    <tr  style="">
+    
+    <TD align="left" style="border:1px solid #000;padding-left:5px">
+      <p style="padding-top:5px">
+      <b> Benificiary Name:&nbsp&nbsp</b>{{wiretransfer_setup_mode.beneficiary_name}}<br>
+      <b> Bank:&nbsp&nbsp</b>{{wiretransfer_setup_mode.beneficiary_bank_name}} <br>
+      <b  style="font-size: 13px;"> ROUTING NUMBER:&nbsp&nbsp </b>{{wiretransfer_setup_mode.beneficiary_routing_number}}<br>
+      <b  style="font-size: 13px;"> ACC NUMBER:&nbsp&nbsp </b>{{wiretransfer_setup_mode.beneficiary_account_number}}<br>
+      <b  style="font-size: 13px;"> SWIFT ID:&nbsp&nbsp</b>{{wiretransfer_setup_mode.beneficiary_swift_code}} </p>
+    
+    </TD>
+
+    <TD align="left" style="border:1px solid #000;padding-left:5px">
+      <p >
+      <b> Bank:&nbsp&nbsp</b>{{wiretransfer_setup_mode.correspondent_bank_name}} <br>
+      <b  style="font-size: 13px;"> ACC NUMBER:&nbsp</b>{{wiretransfer_setup_mode.correspondent_bank_account_number}} <br>
+      <b  style="font-size: 13px;"> SWIFT ID:&nbsp&nbsp</b>{{wiretransfer_setup_mode.correspondent_bank_swift_code}} </p>
+      
+    </TD>
+
+    <TD align="left" style="border:1px solid #000;padding-left:5px"> 
+        <p>
+        <b style="font-size:13px;"> BANK:&nbsp&nbsp</b>{{wiretransfer_setup_mode.further_credit_to_bank}} <br>
+        <b style="font-size:13px;"> BANK ADDRESS:&nbsp&nbsp</b>{{wiretransfer_setup_mode.further_credit_to_bank_address}}</p>
+      
+    </TD>
+    </tr>
+
+ </TABLE> 
+
+{% endif %}
+    <p><u> Payment Terms:</u>
+    <ul type="disc">
+        <li>The above cost <b>does not include</b> transfer costs/banking charges.</br>
+        <li>Invoices would be raised as per the Payment Schedule.</br>
+        <li>Payments to be made within 7 days of the receipt of the invoice.</br>
+        <li>2% per month will be charges on all Outstanding Payments.</li>
+    </u1>
+
+</div>
+<div>
+    <p><b>INVENSIS,Inc.</b></br>
+    <img src="assets/static/img/sign.png" alt="logo" width="120" height="30"><br>
+    <b>Authorized Signatory</b></p>
+
+</div>
+</div>
+</body>
+
+</html>

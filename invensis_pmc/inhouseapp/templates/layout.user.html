@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load templates_extras %}
+{% if user.is_active %}
+    <ul class="userbar" style="margin-top: 14px;">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="margin-left: -200px;color: #00a65a; ">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar }}" height="30" />
+                {% else %}
+                    <img src="" data-src="holder.js/20x20?text=!">
+                {% endif %}
+                {{ user.username }}
+                <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a href="{% url 'account_index' %}">{% blocktrans %}My Account{% endblocktrans %}</a>
+                </li>
+                {% if user.is_staff %}
+                    <li class="divider"></li>
+                    <!--<li><a href="{% url 'admin:index' %}">{% trans "Administration" %}</a></li> -->
+                   
+                    {% if request.user|has_group:"sales manager" %}
+                        <li> <a href="{% url 'masters_list_dashboard' %}">Masters Data</a> </li>
+                        <li> <a href="{% url 'sales_manager_dashboard' %}">CRM Dashboard</a> </li>
+                        <li> <a href="{% url 'stats_dashboard_list' %}">Stats Dashboard</a> </li>
+                    {% elif request.user|has_group:"sales rep" %}
+                        <li> <a href="{% url 'sales_rep_dashboard' %}">Enquiry Dashboard</a> </li>
+
+                    {% elif request.user|has_group:"operations manager" %}
+                        <li> <a href="{% url 'masters_list_dashboard' %}">Masters Data</a> </li>
+                        <li> <a href="{% url 'operation_manager_dashboard' %}">Manager Dashboard</a> </li>
+                    {% elif request.user|has_group:"lead" %}
+                        <li> <a href="{% url 'lead_dashboard' %}">Lead Dashboard</a> </li>
+                    {% elif request.user|has_group:"agent" %}
+                        <li> <a href="{% url 'agent_dashboard' %}">Staff Dashboard</a> </li>
+                    {% elif request.user|has_group:"qc" %}
+                        <li> <a href="{% url 'qc_dashboard' %}">Qc Dashboard</a> </li>
+                    {% elif request.user|has_group:"hr" %}
+                        <li> <a href="{% url 'hr_dashboard' %}">Hr Dashboard</a> </li>
+                    
+                    {% elif request.user|has_group:"management" %}
+                        <li> <a href="{% url 'stats_dashboard_list' %}">Stats Dashboard</a> </li>
+                        <li> <a href="{% url 'management_crm_dashboard' %}">Management Dashboard</a> </li>
+                    {% endif %}
+
+               
+                {% endif %}
+                <li class="divider"></li>
+                {% for language in languages %}
+                    <li {% if language.code == client.language %}class="active"{% endif %}>
+                        <a href="{% url 'language' language.code %}">{{ language }}</a>
+                    </li>
+                {% endfor %}
+                <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+            </ul>
+        </li>
+    </ul>
+{% else %}
+    <ul class="nav navbar-nav navbar-right" >
+        <li><a href="{% url 'account_login' %}" style="margin-left: -180px;color: #00a65a;">{% trans "Login" %}</a></li>
+       <!--  <li><a href="{% url 'account_register' %}">{% trans "Register" %}</a></li> -->
+    </ul>
+{% endif %}
